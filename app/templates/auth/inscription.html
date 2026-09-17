@@ -1,0 +1,63 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Créer un compte — FANTA{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-hero">
+    <div class="inner">
+      <div class="kick">Bienvenue sur</div>
+      <h1>FANTA</h1>
+      <img class="auth-img" src="{{ url_for('static', filename='images/auth.svg') }}" alt="Boisson Fanta orange" loading="eager">
+    </div>
+  </div>
+
+  <div class="auth-card fade-in">
+    <h2>Créer votre compte</h2>
+    <p class="sub">Rejoignez FANTA et commencez à générer des revenus.</p>
+
+    <form method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label class="form-label" for="username">Nom d'utilisateur</label>
+        <input class="form-control" id="username" name="username" type="text" placeholder="Ex : fatou2026" value="{{ form_data.username }}" required minlength="3" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input class="form-control" id="email" name="email" type="email" placeholder="vous@exemple.com" value="{{ form_data.email }}" required autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">Téléphone</label>
+        <input class="form-control" id="phone" name="phone" type="tel" placeholder="+225 07 00 00 00 00" value="{{ form_data.phone }}" autocomplete="tel">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="referral_code">Code de parrainage <span class="muted">(optionnel)</span></label>
+        <input class="form-control" id="referral_code" name="referral_code" type="text" placeholder="ABC12345" value="{{ form_data.referral_code }}" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Mot de passe</label>
+        <input class="form-control" id="password" name="password" type="password" placeholder="6 caractères minimum" required minlength="6" autocomplete="new-password">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirm_password">Confirmation du mot de passe</label>
+        <input class="form-control" id="confirm_password" name="confirm_password" type="password" placeholder="Répétez le mot de passe" required autocomplete="new-password">
+      </div>
+
+      <label class="check-row">
+        <input type="checkbox" name="accept" value="1" required>
+        <span>J'accepte les conditions d'utilisation et la politique de confidentialité.</span>
+      </label>
+
+      <button class="btn btn-primary btn-block mt-2" type="submit">Créer mon compte</button>
+    </form>
+
+    <p class="auth-switch mt-2">Vous avez déjà un compte ? <a href="{{ url_for('auth.login') }}">Se connecter</a></p>
+  </div>
+</div>
+{% endblock %}

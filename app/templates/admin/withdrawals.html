@@ -1,0 +1,43 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Retraits — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Retraits</h1></div>
+
+<div class="chips" style="margin-bottom:12px">
+  <a class="chip {{ 'active' if not status }}" href="{{ url_for('admin.withdrawals') }}">Tous</a>
+  <a class="chip {{ 'active' if status == 'pending' }}" href="{{ url_for('admin.withdrawals', status='pending') }}">En attente</a>
+  <a class="chip {{ 'active' if status == 'approved' }}" href="{{ url_for('admin.withdrawals', status='approved') }}">Approuvés</a>
+  <a class="chip {{ 'active' if status == 'rejected' }}" href="{{ url_for('admin.withdrawals', status='rejected') }}">Rejetés</a>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Utilisateur</th><th>Montant</th><th>Méthode</th><th>Numéro</th><th>Statut</th><th></th></tr>
+    {% for w in items %}
+    <tr>
+      <td><a class="strong" style="color:var(--fanta-orange-deep)" href="{{ url_for('admin.user_detail', user_id=w.user_id) }}">{{ w.user.username }}</a></td>
+      <td><b>{{ w.amount|money }}</b></td>
+      <td>{{ w.method }}</td>
+      <td class="mono">{{ w.destination }}</td>
+      <td>{{ status(w.status) }}</td>
+      <td>
+        {% if w.status == 'pending' %}
+        <div class="row-actions">
+          <form method="post" action="{{ url_for('admin.withdrawal_approve', withdrawal_id=w.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-primary" type="submit">{{ icon('check') }} Approuver</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.withdrawal_reject', withdrawal_id=w.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline" style="color:var(--red)" type="submit">{{ icon('x') }} Rejeter</button>
+          </form>
+        </div>
+        {% else %}<span class="muted small">{{ w.processed_at|fmt_date(true) if w.processed_at else '' }}</span>{% endif %}
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="6" class="muted">Aucun retrait.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

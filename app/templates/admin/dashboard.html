@@ -1,0 +1,48 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Administration — FANTA{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+  <div class="stat-card"><div class="ic">{{ icon('users') }}</div><div class="v">{{ stats.total_users }}</div><div class="l">Utilisateurs totaux</div></div>
+  <div class="stat-card"><div class="ic">{{ icon('check') }}</div><div class="v">{{ stats.active_users }}</div><div class="l">Utilisateurs actifs</div></div>
+  <div class="stat-card"><div class="ic">{{ icon('money') }}</div><div class="v">{{ stats.deposits_sum|money }}</div><div class="l">Dépôts ({{ stats.deposits_count }})</div></div>
+  <div class="stat-card"><div class="ic">{{ icon('arrow-up') }}</div><div class="v">{{ stats.withdrawals_sum|money }}</div><div class="l">Retraits ({{ stats.withdrawals_count }})</div></div>
+  <div class="stat-card"><div class="ic">{{ icon('box') }}</div><div class="v">{{ stats.active_purchases }}</div><div class="l">Produits actifs</div></div>
+  <div class="stat-card"><div class="ic">{{ icon('gift') }}</div><div class="v">{{ stats.commissions_sum|money }}</div><div class="l">Commissions</div></div>
+</div>
+
+<div class="section-title"><h2>Derniers inscrits</h2></div>
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Utilisateur</th><th>Email</th><th>Statut</th></tr>
+    {% for u in recent_users %}
+    <tr>
+      <td><a class="strong" style="color:var(--fanta-orange-deep)" href="{{ url_for('admin.user_detail', user_id=u.id) }}">{{ u.username }}</a></td>
+      <td class="muted">{{ u.email }}</td>
+      <td>{{ status('banned') if u.is_banned else status('active') }}</td>
+    </tr>
+    {% else %}<tr><td colspan="3" class="muted">Aucun inscrit.</td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="section-title"><h2>Dépôts en attente</h2></div>
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Utilisateur</th><th>Montant</th><th>Réf.</th></tr>
+    {% for d in pending_deposits %}
+    <tr><td>{{ d.user.username }}</td><td><b>{{ d.amount|money }}</b></td><td class="mono">{{ d.reference }}</td></tr>
+    {% else %}<tr><td colspan="3" class="muted">Aucun dépôt en attente.</td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="section-title"><h2>Retraits en attente</h2></div>
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Utilisateur</th><th>Montant</th><th>Réf.</th></tr>
+    {% for w in pending_withdrawals %}
+    <tr><td>{{ w.user.username }}</td><td><b>{{ w.amount|money }}</b></td><td class="mono">{{ w.reference }}</td></tr>
+    {% else %}<tr><td colspan="3" class="muted">Aucun retrait en attente.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

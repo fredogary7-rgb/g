@@ -1,0 +1,46 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Connexion — FANTA{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-hero">
+    <div class="inner">
+      <div class="kick">Re-bonjour 👋</div>
+      <h1>Bienvenue sur Fanta</h1>
+      <img class="auth-img" src="{{ url_for('static', filename='images/auth.svg') }}" alt="Boisson Fanta orange" loading="eager">
+    </div>
+  </div>
+
+  <div class="auth-card slide-up">
+    <h2>Se connecter</h2>
+    <p class="sub">Accédez à votre compte et suivez vos revenus.</p>
+
+    <form method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label class="form-label" for="identifier">Nom d'utilisateur ou email</label>
+        <input class="form-control" id="identifier" name="identifier" type="text" placeholder="Votre nom d'utilisateur ou email" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Mot de passe</label>
+        <input class="form-control" id="password" name="password" type="password" placeholder="Votre mot de passe" required autocomplete="current-password">
+      </div>
+
+      <div class="row" style="align-items:center;justify-content:space-between">
+        <label class="check-row" style="font-size:13px">
+          <input type="checkbox" name="remember" value="on">
+          <span>Rester connecté</span>
+        </label>
+        <a class="small strong" style="color:var(--fanta-orange-deep)" href="#">Mot de passe oublié ?</a>
+      </div>
+
+      <button class="btn btn-primary btn-block mt-3" type="submit">Se connecter</button>
+    </form>
+
+    <p class="auth-switch">Pas encore de compte ? <a href="{{ url_for('auth.register') }}">Créer un compte</a></p>
+  </div>
+</div>
+{% endblock %}

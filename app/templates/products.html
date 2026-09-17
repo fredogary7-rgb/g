@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Produits — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('main.dashboard') }}">{{ icon('chevron-left') }}</a>
+  <h1>Nos produits</h1>
+</div>
+
+<p class="muted small" style="margin-bottom:16px">Choisissez un pack FANTA et activez-le pour générer un revenu quotidien.</p>
+
+{% if items %}
+<div class="product-grid">
+  {% for p in items %}
+  <a class="product-card slide-up" href="{{ url_for('main.product_detail', product_id=p.id) }}">
+    <div class="thumb">
+      <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+    </div>
+    <div class="body">
+      <div class="name">{{ p.name }}</div>
+      <div class="price-tag">{{ p.price|money }}</div>
+      <div class="product-specs">
+        <div class="spec-line"><span>Quotidien</span><b>{{ p.daily_income|money }}</b></div>
+        <div class="spec-line"><span>Total</span><b>{{ p.total_income|money }}</b></div>
+        <div class="spec-line"><span>Durée</span><b>{{ p.duration }} jours</b></div>
+      </div>
+      <div class="cta">
+        <span class="btn btn-primary btn-sm" style="width:100%">Voir le produit</span>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <span class="e-ic">{{ icon('box') }}</span>
+  <h3>Aucun produit disponible</h3>
+  <p>Revenez plus tard.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Paramètres — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up"><h1>Paramètres</h1></div>
+
+<div class="menu-list slide-up">
+  <a class="menu-item" href="{{ url_for('account.edit_profile') }}"><span class="m-ic">{{ icon('user') }}</span><span class="m-txt"><span class="t">Informations personnelles</span><span class="s">Modifier nom, email, téléphone</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <div class="menu-item"><span class="m-ic">{{ icon('shield') }}</span><span class="m-txt"><span class="t">Sécurité</span><span class="s">Mot de passe et session</span></span></div>
+  <a class="menu-item" href="{{ url_for('account.change_password') }}"><span class="m-ic">{{ icon('lock') }}</span><span class="m-txt"><span class="t">Changer mot de passe</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <a class="menu-item" href="{{ url_for('account.notifications') }}"><span class="m-ic">{{ icon('bell') }}</span><span class="m-txt"><span class="t">Notifications</span><span class="s">Voir toutes vos alertes</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <form method="post" action="{{ url_for('auth.logout') }}" style="margin:0">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="menu-item" style="width:100%;background:none;border:none;text-align:left;color:var(--red)">
+      <span class="m-ic" style="background:var(--red-bg);color:var(--red)">{{ icon('logout') }}</span>
+      <span class="m-txt"><span class="t">Déconnexion</span></span>
+      {{ icon('chevron-right', 'chev') }}
+    </button>
+  </form>
+</div>
+{% endblock %}

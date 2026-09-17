@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Parrainage — FANTA{% endblock %}
+
+{% block content %}
+<div class="referral-hero slide-up">
+  <h1>Mon lien de parrainage</h1>
+  <p class="sub">Invitez vos amis et gagnez des commissions sur 3 niveaux.</p>
+</div>
+
+<div class="ref-box slide-up">
+  <span class="code">{{ referral_link }}</span>
+</div>
+
+<div class="ref-actions slide-up">
+  <button class="btn btn-primary" data-copy="{{ referral_link }}">{{ icon('copy') }} Copier le lien</button>
+  <button class="btn btn-outline" data-share="{{ referral_link }}" data-share-title="FANTA" data-share-text="Rejoignez-moi sur FANTA !">{{ icon('share') }} Partager</button>
+</div>
+
+<div class="card card-pad mt-2 slide-up">
+  <div class="rate-row"><span class="lv">Code de parrainage</span><span class="rt" style="font-size:15px">{{ referral_code }}</span></div>
+  <div class="rate-row"><span class="lv">Nombre de filleuls</span><span class="rt" style="font-size:15px">{{ direct_count }}</span></div>
+</div>
+
+<div class="section-title"><h2>Taux de commission</h2></div>
+<div class="card card-pad slide-up">
+  <div class="rate-row"><span class="lv">Niveau 1 (filleuls directs)</span><span class="rt">{{ (referral_levels[0] * 100)|int }} %</span></div>
+  <div class="rate-row"><span class="lv">Niveau 2</span><span class="rt">{{ (referral_levels[1] * 100)|int }} %</span></div>
+  <div class="rate-row"><span class="lv">Niveau 3</span><span class="rt">{{ (referral_levels[2] * 100)|int }} %</span></div>
+</div>
+{% endblock %}

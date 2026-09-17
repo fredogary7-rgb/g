@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Portefeuille — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up"><h1>Mon portefeuille</h1></div>
+
+<div class="balance-card slide-up slide-up-1">
+  <div class="lbl">Solde disponible</div>
+  <div class="amount">{{ data.balance|money }}</div>
+  <div class="row mt-2">
+    <a class="btn btn-primary btn-sm" href="{{ url_for('wallet.deposit') }}">{{ icon('plus') }} Dépôt</a>
+    <a class="btn btn-outline btn-sm" href="{{ url_for('wallet.withdraw') }}">{{ icon('arrow-up') }} Retrait</a>
+  </div>
+</div>
+
+<div class="stat-grid mt-3">
+  <div class="stat-card slide-up"><div class="ic">{{ icon('trending') }}</div><div class="v">{{ data.total_deposit|money }}</div><div class="l">Total déposé</div></div>
+  <div class="stat-card slide-up"><div class="ic">{{ icon('money') }}</div><div class="v">{{ data.income|money }}</div><div class="l">Revenus</div></div>
+  <div class="stat-card slide-up"><div class="ic">{{ icon('gift') }}</div><div class="v">{{ data.commission|money }}</div><div class="l">Commissions</div></div>
+  <div class="stat-card slide-up"><div class="ic">{{ icon('box') }}</div><div class="v">{{ data.active_products }}</div><div class="l">Produits actifs</div></div>
+</div>
+
+<div class="section-title"><h2>Actions rapides</h2></div>
+<div class="grid-2">
+  <a class="card card-pad" href="{{ url_for('wallet.history') }}" style="display:flex;align-items:center;gap:10px">{{ icon('clock') }} <span class="strong small">Historique</span></a>
+  <a class="card card-pad" href="{{ url_for('team.referral') }}" style="display:flex;align-items:center;gap:10px">{{ icon('share') }} <span class="strong small">Parrainage</span></a>
+</div>
+{% endblock %}

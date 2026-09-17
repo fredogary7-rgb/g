@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Dépôt — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('wallet.overview') }}">{{ icon('chevron-left') }}</a>
+  <h1>Recharger</h1>
+</div>
+
+<div class="card card-pad slide-up">
+  <div class="badge badge-warning" style="margin-bottom:12px">Mode SANDBOX — test uniquement</div>
+  <p class="small muted">Votre dépôt sera enregistré comme une demande de test et validé manuellement par l'administrateur. Aucun paiement réel n'est effectué tant que le prestataire officiel n'est pas branché.</p>
+
+  <form method="post" class="mt-2">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-group">
+      <label class="form-label" for="amount">Montant ({{ CURRENCY }})</label>
+      <input class="form-control" id="amount" name="amount" type="number" min="100" step="any" placeholder="Ex : 4000" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="method">Méthode de paiement</label>
+      <select class="form-control" id="method" name="method" required>
+        <option value="" disabled selected>Choisir une méthode</option>
+        {% for m in methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+      </select>
+    </div>
+
+    <button class="btn btn-primary btn-block" type="submit">{{ icon('arrow-down') }} Créer le dépôt</button>
+  </form>
+</div>
+{% endblock %}

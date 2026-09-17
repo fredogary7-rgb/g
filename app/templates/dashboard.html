@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Tableau de bord — FANTA{% endblock %}
+
+{% block content %}
+<section class="hero greeting slide-up">
+  <div class="content">
+    <div class="label">Bienvenue 👋</div>
+    <h1>Bonjour, {{ current_user.username }}</h1>
+    <p class="sub">Voici votre aperçu FANTA du jour.</p>
+  </div>
+  <img class="hero-img" src="{{ url_for('static', filename='images/fanta-1.svg') }}" alt="Fanta" loading="lazy">
+</section>
+
+<div class="balance-card slide-up slide-up-1">
+  <div class="lbl">Solde disponible</div>
+  <div class="amount">{{ stats.balance|money }}</div>
+</div>
+
+<div class="hero-stats slide-up slide-up-2">
+  <div class="hero-stat"><div class="v">{{ stats.income|money }}</div><div class="l">Revenus</div></div>
+  <div class="hero-stat"><div class="v">{{ stats.commission|money }}</div><div class="l">Commissions</div></div>
+</div>
+
+<div class="quick-grid slide-up slide-up-3">
+  <a class="quick" href="{{ url_for('wallet.deposit') }}"><span class="q-ic">{{ icon('refresh') }}</span><span>Recharger</span></a>
+  <a class="quick" href="{{ url_for('main.products') }}"><span class="q-ic">{{ icon('box') }}</span><span>Produits</span></a>
+  <a class="quick" href="{{ url_for('wallet.withdraw') }}"><span class="q-ic">{{ icon('arrow-up') }}</span><span>Retrait</span></a>
+  <a class="quick" href="{{ url_for('team.team') }}"><span class="q-ic">{{ icon('users') }}</span><span>Équipe</span></a>
+  <a class="quick" href="{{ url_for('team.referral') }}"><span class="q-ic">{{ icon('share') }}</span><span>Partager</span></a>
+</div>
+
+<div class="section-title slide-up">
+  <h2>Produit en avant</h2>
+</div>
+{% if featured %}
+<a class="card" href="{{ url_for('main.product_detail', product_id=featured.id) }}" style="display:flex;align-items:center;gap:14px;padding:14px">
+  <img src="{{ url_for('static', filename='images/' ~ featured.image) }}" alt="{{ featured.name }}" style="width:74px;height:74px;border-radius:14px;background:var(--fanta-cream-2);object-fit:contain;padding:6px" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+  <div style="flex:1">
+    <div class="strong" style="font-size:16px">{{ featured.name }}</div>
+    <div class="muted small">{{ featured.duration }} jours · {{ featured.daily_income|money }}/jour</div>
+    <span class="price-tag">{{ featured.price|money }}</span>
+  </div>
+  {{ icon('chevron-right') }}
+</a>
+{% endif %}
+
+<div class="section-title slide-up">
+  <h2>Nos produits</h2>
+  <a class="link" href="{{ url_for('main.products') }}">Tout voir</a>
+</div>
+<div class="product-grid">
+  {% for p in products[:4] %}
+  <a class="product-card" href="{{ url_for('main.product_detail', product_id=p.id) }}">
+    <div class="thumb">
+      <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+    </div>
+    <div class="body">
+      <div class="name">{{ p.name }}</div>
+      <div class="price-tag">{{ p.price|money }}</div>
+      <div class="product-specs">
+        <div class="spec-line"><span>Quotidien</span><b>{{ p.daily_income|money }}</b></div>
+        <div class="spec-line"><span>Durée</span><b>{{ p.duration }} jours</b></div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<div class="section-title slide-up">
+  <h2>Activité récente</h2>
+  <a class="link" href="{{ url_for('wallet.history') }}">Historique</a>
+</div>
+<div class="card card-pad timeline">
+  {% for t in recent %}
+  <div class="timeline-item">
+    {% set credit = t.amount >= 0 %}
+    <div class="tx-icon {{ 'in' if credit else 'out' }}">
+      {% if t.type == 'commission' %}{{ icon('gift') }}
+      {% elif t.type == 'income' %}{{ icon('money') }}
+      {% elif t.type == 'deposit' %}{{ icon('arrow-down') }}
+      {% elif t.type == 'withdrawal' %}{{ icon('arrow-up') }}
+      {% elif t.type == 'purchase' %}{{ icon('box') }}
+      {% else %}{{ icon('refresh') }}{% endif %}
+    </div>
+    <div class="tx-body">
+      <div class="t">{{ t.description or t.type }}</div>
+      <div class="d">{{ t.created_at|timeago }} · <span class="mono" style="font-size:11px;color:var(--fanta-muted)">{{ t.reference }}</span></div>
+    </div>
+    <div class="tx-amount">
+      <div class="amt {{ 'credit' if credit else 'debit' }}">{{ ('+' if credit else '') ~ t.amount|money }}</div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty" style="padding:20px"><p class="muted">Aucune activité pour le moment.</p></div>
+  {% endfor %}
+</div>
+
+<div class="section-title slide-up"><h2>Informations</h2></div>
+<div class="card card-pad slide-up" style="background:var(--fanta-orange);color:#fff;border:none">
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center">{{ icon('info') }}</span>
+    <div>
+      <div class="strong" style="font-size:15px">FANTA — l'énergie du plaisir</div>
+      <div class="small" style="opacity:.9;margin-top:3px">Application indépendante de démonstration. Les dépôts et retraits en mode test ne sont pas des transactions réelles.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

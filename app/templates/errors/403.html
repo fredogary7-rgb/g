@@ -1,0 +1,11 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Accès refusé — FANTA{% endblock %}
+{% block content %}
+<div class="empty" style="padding-top:120px">
+  <span class="e-ic">{{ icon('ban') }}</span>
+  <h1>Accès refusé</h1>
+  <p>Vous n'avez pas l'autorisation d'accéder à cette page.</p>
+  <a class="btn btn-primary mt-3" href="{{ url_for('main.dashboard') }}">Retour au tableau de bord</a>
+</div>
+{% endblock %}

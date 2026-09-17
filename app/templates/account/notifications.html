@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Notifications — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('account.settings') }}">{{ icon('chevron-left') }}</a>
+  <h1>Notifications</h1>
+  <form method="post" action="{{ url_for('account.mark_all_read') }}" style="margin-left:auto">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-outline btn-sm" type="submit">Tout marquer lu</button>
+  </form>
+</div>
+
+<div class="card card-pad slide-up">
+  {% for n in items %}
+  <div class="notif-item {{ 'unread' if (n.user_id == current_user.id and not n.is_read) else '' }}">
+    <span class="dot-n"></span>
+    <div style="flex:1;min-width:0">
+      <div class="nt">{{ n.title }}</div>
+      {% if n.message %}<div class="nm">{{ n.message }}</div>{% endif %}
+      <div class="time">{{ n.created_at|timeago }} · {{ n.type }}</div>
+    </div>
+    {% if n.link and n.user_id == current_user.id %}
+    <form method="post" action="{{ url_for('account.mark_read', notification_id=n.id) }}" style="margin:0">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-ghost btn-sm" type="submit">{{ icon('chevron-right') }}</button>
+    </form>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="empty" style="padding:16px"><span class="e-ic">{{ icon('bell') }}</span><h3>Aucune notification</h3><p class="small">Vous êtes à jour.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

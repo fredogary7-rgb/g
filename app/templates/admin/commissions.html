@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Commissions — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Commissions</h1></div>
+
+<div class="chips" style="margin-bottom:12px">
+  <a class="chip {{ 'active' if not level }}" href="{{ url_for('admin.commissions') }}">Tous</a>
+  <a class="chip {{ 'active' if level == 1 }}" href="{{ url_for('admin.commissions', level=1) }}">Niveau 1</a>
+  <a class="chip {{ 'active' if level == 2 }}" href="{{ url_for('admin.commissions', level=2) }}">Niveau 2</a>
+  <a class="chip {{ 'active' if level == 3 }}" href="{{ url_for('admin.commissions', level=3) }}">Niveau 3</a>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Bénéficiaire</th><th>Source</th><th>Niveau</th><th>Taux</th><th>Montant</th><th>Statut</th><th></th></tr>
+    {% for c in items %}
+    <tr>
+      <td>{{ c.beneficiary.username }}</td>
+      <td class="muted">{{ c.source_user.username }}</td>
+      <td>N{{ c.level }}</td>
+      <td>{{ (c.rate * 100)|int }}%</td>
+      <td><b>{{ c.amount|money }}</b></td>
+      <td>{{ status(c.status) }}</td>
+      <td>
+        {% if c.status == 'pending' %}
+        <div class="row-actions">
+          <form method="post" action="{{ url_for('admin.commission_approve', commission_id=c.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-primary" type="submit">{{ icon('check') }}</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.commission_cancel', commission_id=c.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline" style="color:var(--red)" type="submit">{{ icon('x') }}</button>
+          </form>
+        </div>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="7" class="muted">Aucune commission.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

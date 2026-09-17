@@ -1,0 +1,82 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Utilisateur — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <a class="back-btn" href="{{ url_for('admin.users') }}">{{ icon('chevron-left') }}</a>
+  <h1>{{ user.username }}</h1>
+</div>
+
+<div class="card card-pad">
+  <div class="row" style="align-items:center">
+    <span class="avatar lg">{{ user.username[:1]|upper }}</span>
+    <div>
+      <div class="strong" style="font-size:17px">{{ user.username }} {% if user.is_admin %}<span class="badge badge-info">Admin</span>{% endif %}</div>
+      <div class="muted small">{{ user.email }}</div>
+      <div class="small mt-1">{{ status('banned') if user.is_banned else status('active') }}</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="info-list">
+    <div class="row-item"><span class="k">Solde</span><span class="v">{{ user.balance|money }}</span></div>
+    <div class="row-item"><span class="k">Revenus</span><span class="v">{{ user.total_income|money }}</span></div>
+    <div class="row-item"><span class="k">Commissions</span><span class="v">{{ user.total_commission|money }}</span></div>
+    <div class="row-item"><span class="k">Code parrainage</span><span class="v">{{ user.referral_code }}</span></div>
+    <div class="row-item"><span class="k">Inscrit le</span><span class="v">{{ user.created_at|fmt_date }}</span></div>
+  </div>
+</div>
+
+<div class="section-title"><h2>Modifier</h2></div>
+<div class="card card-pad">
+  <form method="post" action="{{ url_for('admin.edit_user', user_id=user.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group"><label class="form-label">Nom d'utilisateur</label><input class="form-control" name="username" value="{{ user.username }}"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-control" name="email" value="{{ user.email }}"></div>
+    <div class="form-group"><label class="form-label">Téléphone</label><input class="form-control" name="phone" value="{{ user.phone or '' }}"></div>
+    <button class="btn btn-primary btn-sm" type="submit">Enregistrer</button>
+  </form>
+</div>
+
+<div class="section-title"><h2>Statut du compte</h2></div>
+<div class="card card-pad">
+  {% if user.is_banned %}
+  <form method="post" action="{{ url_for('admin.unban_user', user_id=user.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-primary btn-block" type="submit">{{ icon('check') }} Débannir</button>
+  </form>
+  {% else %}
+  <form method="post" action="{{ url_for('admin.ban_user', user_id=user.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-danger btn-block" type="submit">{{ icon('ban') }} Bannir</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="section-title"><h2>Équipe ({{ level1|length }} directs)</h2></div>
+<div class="card card-pad">
+  {% for m in level1 %}
+  <div class="member-card" style="margin-top:8px"><span class="avatar sm">{{ m.username[:1]|upper }}</span><div class="member-info"><div class="n">{{ m.username }}</div><div class="s">{{ m.email }}</div></div></div>
+  {% else %}<p class="muted small">Aucun filleul direct.</p>{% endfor %}
+</div>
+
+<div class="section-title"><h2>Dernières transactions</h2></div>
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Type</th><th>Montant</th><th>Date</th></tr>
+    {% for t in transactions %}
+    <tr><td>{{ t.type }}</td><td><b>{{ t.amount|money }}</b></td><td class="muted small">{{ t.created_at|fmt_date(true) }}</td></tr>
+    {% else %}<tr><td colspan="3" class="muted">Aucune.</td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="section-title"><h2>Produits achetés</h2></div>
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Produit</th><th>Statut</th><th>Fin</th></tr>
+    {% for p in purchases %}
+    <tr><td>{{ p.product.name }}</td><td>{{ status(p.status) }}</td><td class="muted small">{{ p.end_date|fmt_date }}</td></tr>
+    {% else %}<tr><td colspan="3" class="muted">Aucun achat.</td></tr>{% endfor %}
+  </table>
+</div>
+{% endblock %}

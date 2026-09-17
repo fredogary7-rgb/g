@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Confirmation — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('main.product_detail', product_id=product.id) }}">{{ icon('chevron-left') }}</a>
+  <h1>Confirmation</h1>
+</div>
+
+<div class="card card-pad slide-up slide-up-1 center">
+  <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}" style="width:96px;height:96px;margin:0 auto;border-radius:16px;object-fit:contain;background:var(--fanta-cream-2);padding:8px" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+  <h2 class="mt-2">{{ product.name }}</h2>
+  <div class="detail-price" style="font-size:22px">{{ product.price|money }}</div>
+  <p class="muted small mt-1">Vérifiez les informations avant de continuer.</p>
+</div>
+
+<div class="recap slide-up slide-up-2">
+  <div class="line"><span>Revenu quotidien</span><span>{{ product.daily_income|money }}</span></div>
+  <div class="line"><span>Revenu total</span><span>{{ product.total_income|money }}</span></div>
+  <div class="line"><span>Durée</span><span>{{ product.duration }} jours</span></div>
+  <div class="line"><span>Solde disponible</span><span>{{ current_user.balance|money }}</span></div>
+</div>
+
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="ref-actions mt-3">
+    <button class="btn btn-primary" type="submit">Confirmer</button>
+    <a class="btn btn-outline" href="{{ url_for('main.product_detail', product_id=product.id) }}">Annuler</a>
+  </div>
+</form>
+{% endblock %}

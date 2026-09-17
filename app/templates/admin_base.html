@@ -1,0 +1,49 @@
+{% from "_macros.html" import icon, status %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#201a15">
+  <title>{% block title %}Administration FANTA{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app admin-wrap">
+    <header class="admin-top">
+      <div class="row">
+        <div>
+          <span class="logo" style="color:#fff">FANTA<span class="dot"></span></span>
+          <h1 style="font-size:15px;margin-top:2px;opacity:.85">Espace administration</h1>
+        </div>
+        <a class="btn btn-sm btn-outline" style="background:transparent;color:#fff;border-color:#5c5347" href="{{ url_for('main.dashboard') }}">Voir le site</a>
+      </div>
+    </header>
+
+    <nav class="admin-tabs">
+      {% set ep = request.endpoint or '' %}
+      <a class="admin-tab {{ 'active' if ep == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}">Tableau de bord</a>
+      <a class="admin-tab {{ 'active' if ep.startswith('admin.user') }}" href="{{ url_for('admin.users') }}">Utilisateurs</a>
+      <a class="admin-tab {{ 'active' if ep.startswith('admin.product') }}" href="{{ url_for('admin.products') }}">Produits</a>
+      <a class="admin-tab {{ 'active' if ep.startswith('admin.deposit') }}" href="{{ url_for('admin.deposits') }}">Dépôts</a>
+      <a class="admin-tab {{ 'active' if ep.startswith('admin.withdrawal') }}" href="{{ url_for('admin.withdrawals') }}">Retraits</a>
+      <a class="admin-tab {{ 'active' if ep.startswith('admin.commission') }}" href="{{ url_for('admin.commissions') }}">Commissions</a>
+      <a class="admin-tab {{ 'active' if ep == 'admin.transactions' }}" href="{{ url_for('admin.transactions') }}">Transactions</a>
+      <a class="admin-tab {{ 'active' if ep == 'admin.actions' }}" href="{{ url_for('admin.actions') }}">Journal</a>
+    </nav>
+
+    <div class="flash-stack">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+    </div>
+
+    <main class="page" style="padding-bottom:40px">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

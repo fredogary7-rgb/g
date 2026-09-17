@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}{{ product.name }} — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('main.products') }}">{{ icon('chevron-left') }}</a>
+  <h1>{{ product.name }}</h1>
+</div>
+
+<div class="detail-hero slide-up slide-up-1">
+  <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+</div>
+
+<div class="detail-title slide-up slide-up-2">
+  <h1>{{ product.name }}</h1>
+  <span class="detail-price">{{ product.price|money }}</span>
+</div>
+{% if product.description %}<p class="muted small mt-1">{{ product.description }}</p>{% endif %}
+
+<div class="spec-box slide-up">
+  <div class="cell"><div class="v">{{ product.daily_income|money }}</div><div class="l">Quotidien</div></div>
+  <div class="cell"><div class="v">{{ product.total_income|money }}</div><div class="l">Total</div></div>
+  <div class="cell"><div class="v">{{ product.duration }} j</div><div class="l">Durée</div></div>
+</div>
+
+<div class="recap slide-up">
+  <div class="line"><span>Prix du pack</span><span>{{ product.price|money }}</span></div>
+  <div class="line"><span>Revenu quotidien</span><span>{{ product.daily_income|money }}</span></div>
+  <div class="line"><span>Durée</span><span>{{ product.duration }} jours</span></div>
+  <div class="line total"><span>Revenu total attendu</span><span>{{ product.total_income|money }}</span></div>
+</div>
+
+<a class="btn btn-primary btn-block mt-3" href="{{ url_for('main.product_confirm', product_id=product.id) }}">Continuer</a>
+{% endblock %}

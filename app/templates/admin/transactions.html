@@ -1,0 +1,31 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Transactions — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Transactions</h1></div>
+
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Utilisateur</th><th>Type</th><th>Montant</th><th>Réf.</th><th>Date</th><th>Statut</th></tr>
+    {% for t in pagination.items %}
+    <tr>
+      <td>{{ t.user.username }}</td>
+      <td>{{ t.type }}</td>
+      <td><b>{{ t.amount|money }}</b></td>
+      <td class="mono">{{ t.reference }}</td>
+      <td class="muted small">{{ t.created_at|fmt_date(true) }}</td>
+      <td>{{ status(t.status) }}</td>
+    </tr>
+    {% else %}<tr><td colspan="6" class="muted">Aucune transaction.</td></tr>{% endfor %}
+  </table>
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="pagination">
+  {% if pagination.has_prev %}<a href="{{ url_for('admin.transactions', page=pagination.prev_num) }}">‹</a>{% endif %}
+  <span class="cur">{{ pagination.page }}</span>
+  {% if pagination.has_next %}<a href="{{ url_for('admin.transactions', page=pagination.next_num) }}">›</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

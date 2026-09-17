@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Historique — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('wallet.overview') }}">{{ icon('chevron-left') }}</a>
+  <h1>Historique</h1>
+</div>
+
+<div class="chips slide-up">
+  <a class="chip {{ 'active' if not type_filter }}" href="{{ url_for('wallet.history') }}">Tout</a>
+  {% for key, label in labels.items() %}
+  <a class="chip {{ 'active' if type_filter == key }}" href="{{ url_for('wallet.history', type=key) }}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="card card-pad timeline slide-up">
+  {% for t in items %}
+  {% set credit = t.amount >= 0 %}
+  <div class="timeline-item">
+    <div class="tx-icon {{ 'in' if credit else 'out' }}">
+      {% if t.type == 'commission' %}{{ icon('gift') }}
+      {% elif t.type == 'income' %}{{ icon('money') }}
+      {% elif t.type == 'deposit' %}{{ icon('arrow-down') }}
+      {% elif t.type == 'withdrawal' %}{{ icon('arrow-up') }}
+      {% elif t.type == 'purchase' %}{{ icon('box') }}
+      {% else %}{{ icon('refresh') }}{% endif %}
+    </div>
+    <div class="tx-body">
+      <div class="t">{{ labels.get(t.type, t.type) }}</div>
+      <div class="d">{{ t.description or '' }}</div>
+      <div class="d" style="margin-top:4px">{{ t.created_at|fmt_date(true) }}</div>
+      <div class="d mono" style="font-size:11px">{{ t.reference }}</div>
+    </div>
+    <div class="tx-amount">
+      <div class="amt {{ 'credit' if credit else 'debit' }}">{{ ('+' if credit else '') ~ t.amount|money }}</div>
+      {{ status(t.status) }}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty" style="padding:16px"><span class="e-ic">{{ icon('clock') }}</span><h3>Aucune opération</h3><p class="small">Vos mouvements apparaîtront ici.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

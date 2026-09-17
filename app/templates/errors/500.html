@@ -1,0 +1,11 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Erreur serveur — FANTA{% endblock %}
+{% block content %}
+<div class="empty" style="padding-top:120px">
+  <span class="e-ic">{{ icon('info') }}</span>
+  <h1>Une erreur est survenue</h1>
+  <p>Veuillez réessayer dans un instant.</p>
+  <a class="btn btn-primary mt-3" href="{{ url_for('main.home') }}">Retour à l'accueil</a>
+</div>
+{% endblock %}

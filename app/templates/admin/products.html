@@ -1,0 +1,40 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon, status %}
+{% block title %}Produits — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head" style="align-items:center">
+  <h1>Produits</h1>
+  <a class="btn btn-primary btn-sm" style="margin-left:auto" href="{{ url_for('admin.product_new') }}">{{ icon('plus') }} Ajouter</a>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <tr><th>Produit</th><th>Prix</th><th>Quotidien</th><th>Total</th><th>Durée</th><th>Statut</th><th></th></tr>
+    {% for p in items %}
+    <tr>
+      <td>
+        <div class="row" style="align-items:center">
+          <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="" style="width:34px;height:34px;border-radius:9px;object-fit:contain;background:var(--fanta-cream-2)" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+          <span class="strong">{{ p.name }}</span>
+        </div>
+      </td>
+      <td>{{ p.price|money }}</td>
+      <td>{{ p.daily_income|money }}</td>
+      <td>{{ p.total_income|money }}</td>
+      <td>{{ p.duration }} j</td>
+      <td>{{ status('active') if p.active else status('cancelled') }}</td>
+      <td>
+        <div class="row-actions">
+          <a class="btn btn-outline btn-sm" href="{{ url_for('admin.product_edit', product_id=p.id) }}">{{ icon('edit') }}</a>
+          <form method="post" action="{{ url_for('admin.product_toggle', product_id=p.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm {{ 'btn-primary' if not p.active else 'btn-outline' }}" type="submit">{{ 'Activer' if not p.active else 'Désactiver' }}</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

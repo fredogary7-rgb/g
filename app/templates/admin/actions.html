@@ -1,0 +1,21 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Journal — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Journal des actions</h1></div>
+
+<div class="card card-pad timeline">
+  {% for a in items %}
+  <div class="timeline-item">
+    <div class="tx-icon orange">{{ icon('shield') }}</div>
+    <div class="tx-body">
+      <div class="t">{{ a.action }}</div>
+      <div class="d small">{{ a.target_type }}{% if a.target_id %} #{{ a.target_id }}{% endif %} · par {{ a.admin.username }}</div>
+      {% if a.detail %}<div class="d small" style="color:var(--fanta-muted)">{{ a.detail }}</div>{% endif %}
+      <div class="d mono" style="font-size:11px">{{ a.created_at|fmt_date(true) }}</div>
+    </div>
+  </div>
+  {% else %}<p class="muted small">Aucune action enregistrée.</p>{% endfor %}
+</div>
+{% endblock %}

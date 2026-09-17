@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Retrait — FANTA{% endblock %}
+
+{% block content %}
+<div class="page-head slide-up">
+  <a class="back-btn" href="{{ url_for('wallet.overview') }}">{{ icon('chevron-left') }}</a>
+  <h1>Retirer</h1>
+</div>
+
+<div class="balance-card slide-up">
+  <div class="lbl">Solde disponible</div>
+  <div class="amount" style="font-size:24px">{{ balance|money }}</div>
+</div>
+
+<div class="card card-pad mt-2 slide-up">
+  <p class="small muted">Le montant demandé est immobilisé dès la soumission et recrédité en cas de rejet. Aucun transfert réel n'est simulé.</p>
+
+  <form method="post" class="mt-2">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-group">
+      <label class="form-label" for="amount">Montant ({{ CURRENCY }})</label>
+      <input class="form-control" id="amount" name="amount" type="number" min="100" step="any" placeholder="Montant à retirer" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="method">Méthode de retrait</label>
+      <select class="form-control" id="method" name="method" required>
+        <option value="" disabled selected>Choisir une méthode</option>
+        {% for m in methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="destination">Numéro de paiement</label>
+      <input class="form-control" id="destination" name="destination" type="text" placeholder="Ex : +225 07 00 00 00 00" required>
+    </div>
+
+    <button class="btn btn-dark btn-block" type="submit">{{ icon('arrow-up') }} Demander le retrait</button>
+  </form>
+</div>
+{% endblock %}

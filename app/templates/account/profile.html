@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Profil — FANTA{% endblock %}
+
+{% block content %}
+<div class="profile-head slide-up">
+  <span class="avatar lg">{{ user.username[:1]|upper }}</span>
+  <h1>{{ user.username }}</h1>
+  <p class="sub">{{ user.email }}</p>
+  {% if user.is_admin %}<span class="badge badge-info mt-1">Administrateur</span>{% endif %}
+</div>
+
+<div class="card card-pad info-list mt-2 slide-up">
+  <div class="row-item"><span class="k">Nom d'utilisateur</span><span class="v">{{ user.username }}</span></div>
+  <div class="row-item"><span class="k">Email</span><span class="v">{{ user.email }}</span></div>
+  <div class="row-item"><span class="k">Téléphone</span><span class="v">{{ user.phone or '—' }}</span></div>
+  <div class="row-item"><span class="k">Code de parrainage</span><span class="v" style="letter-spacing:.05em">{{ user.referral_code }}</span></div>
+  <div class="row-item"><span class="k">Date d'inscription</span><span class="v">{{ user.created_at|fmt_date }}</span></div>
+</div>
+
+<div class="section-title"><h2>Actions</h2></div>
+<div class="menu-list slide-up">
+  <a class="menu-item" href="{{ url_for('account.edit_profile') }}"><span class="m-ic">{{ icon('edit') }}</span><span class="m-txt"><span class="t">Modifier profil</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <a class="menu-item" href="{{ url_for('account.change_password') }}"><span class="m-ic">{{ icon('lock') }}</span><span class="m-txt"><span class="t">Changer mot de passe</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <a class="menu-item" href="{{ url_for('account.settings') }}"><span class="m-ic">{{ icon('settings') }}</span><span class="m-txt"><span class="t">Paramètres</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <a class="menu-item" href="{{ url_for('team.referral') }}"><span class="m-ic">{{ icon('gift') }}</span><span class="m-txt"><span class="t">Parrainage</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <form method="post" action="{{ url_for('auth.logout') }}" style="margin:0">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="menu-item" style="width:100%;background:none;border:none;text-align:left;color:var(--red)">
+      <span class="m-ic" style="background:var(--red-bg);color:var(--red)">{{ icon('logout') }}</span>
+      <span class="m-txt"><span class="t">Déconnexion</span></span>
+      {{ icon('chevron-right', 'chev') }}
+    </button>
+  </form>
+</div>
+{% endblock %}

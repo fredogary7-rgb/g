@@ -1,0 +1,11 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Page introuvable — FANTA{% endblock %}
+{% block content %}
+<div class="empty" style="padding-top:120px">
+  <span class="e-ic" style="font-size:40px;font-weight:900;color:var(--fanta-orange)">404</span>
+  <h1>Page introuvable</h1>
+  <p>Cette page n'existe pas ou a été déplacée.</p>
+  <a class="btn btn-primary mt-3" href="{{ url_for('main.home') }}">Retour à l'accueil</a>
+</div>
+{% endblock %}

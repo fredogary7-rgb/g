@@ -1,0 +1,31 @@
+{% extends "admin_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}{{ 'Nouveau produit' if not product else 'Modifier produit' }} — FANTA{% endblock %}
+
+{% block content %}
+{% set p = product %}
+<div class="page-head">
+  <a class="back-btn" href="{{ url_for('admin.products') }}">{{ icon('chevron-left') }}</a>
+  <h1>{{ 'Nouveau produit' if not p else p.name }}</h1>
+</div>
+
+<div class="card card-pad">
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group"><label class="form-label">Nom</label><input class="form-control" name="name" value="{{ p.name if p else '' }}" required></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Prix (FCFA)</label><input class="form-control" name="price" type="number" step="any" value="{{ p.price|string if p else '' }}" required></div>
+      <div class="form-group"><label class="form-label">Quotidien (FCFA)</label><input class="form-control" name="daily_income" type="number" step="any" value="{{ p.daily_income|string if p else '' }}" required></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Total (FCFA)</label><input class="form-control" name="total_income" type="number" step="any" value="{{ p.total_income|string if p else '' }}" required></div>
+      <div class="form-group"><label class="form-label">Durée (jours)</label><input class="form-control" name="duration" type="number" value="{{ p.duration if p else 35 }}" required></div>
+    </div>
+    <div class="form-group"><label class="form-label">Image (fichier dans static/images)</label><input class="form-control" name="image" value="{{ p.image if p else 'fanta-product.svg' }}"></div>
+    <div class="form-group"><label class="form-label">Ordre d'affichage</label><input class="form-control" name="sort_order" type="number" value="{{ p.sort_order if p else 0 }}"></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" name="description">{{ p.description if p else '' }}</textarea></div>
+    <label class="check-row"><input type="checkbox" name="active" {{ 'checked' if (not p or p.active) else '' }}><span>Produit actif</span></label>
+    <button class="btn btn-primary btn-block mt-2" type="submit">Enregistrer</button>
+  </form>
+</div>
+{% endblock %}

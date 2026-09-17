@@ -1,0 +1,45 @@
+{% extends "auth_base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}FANTA — L'énergie du plaisir{% endblock %}
+
+{% block content %}
+<div class="auth-wrap" style="padding-bottom:40px">
+  <div class="auth-hero" style="padding-bottom:60px;text-align:center">
+    <div class="inner">
+      <img src="{{ url_for('static', filename='images/hero.svg') }}" alt="FANTA" style="width:100%;max-width:340px;margin:0 auto;border-radius:18px;box-shadow:0 18px 40px rgba(120,40,0,.35)" loading="eager">
+      <h1 style="font-size:32px;margin-top:20px">L'énergie du plaisir</h1>
+      <p class="sub" style="margin-top:8px;max-width:320px;margin-left:auto;margin-right:auto">Une plateforme simple pour découvrir, investir et faire grandir votre équipe.</p>
+      <div class="row mt-2" style="justify-content:center;margin-top:20px">
+        <a class="btn btn-dark" href="{{ url_for('auth.register') }}">Créer un compte</a>
+        <a class="btn" style="background:#fff;color:var(--fanta-orange-deep)" href="{{ url_for('auth.login') }}">Se connecter</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-card" style="margin-top:0">
+    <div class="section-title" style="margin-top:0"><h2>Nos produits</h2></div>
+    <div class="product-grid">
+      {% for p in products %}
+      <div class="product-card">
+        <div class="thumb">
+          <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
+        </div>
+        <div class="body">
+          <div class="name">{{ p.name }}</div>
+          <div class="price-tag">{{ p.price|money }}</div>
+          <div class="product-specs">
+            <div class="spec-line"><span>Quotidien</span><b>{{ p.daily_income|money }}</b></div>
+            <div class="spec-line"><span>Total</span><b>{{ p.total_income|money }}</b></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <a class="btn btn-primary btn-block mt-2" href="{{ url_for('auth.register') }}">Rejoindre FANTA</a>
+  </div>
+
+  <div class="card card-pad center" style="margin:0 18px">
+    <p class="muted small">FANTA est une application indépendante de démonstration. Elle n'est ni affiliée ni approuvée par la marque Fanta® ou The Coca-Cola Company.</p>
+  </div>
+</div>
+{% endblock %}
