@@ -20,8 +20,9 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <div class="form-group">
-        <label class="form-label" for="username">Nom d'utilisateur</label>
-        <input class="form-control" id="username" name="username" type="text" placeholder="Ex : fatou2026" value="{{ form_data.username }}" required minlength="3" autocomplete="username">
+        <label class="form-label" for="phone">Numéro de téléphone</label>
+        <input class="form-control" id="phone" name="phone" type="tel" placeholder="+226 70 12 34 56" value="{{ form_data.phone }}" required autocomplete="tel">
+        <p class="form-hint">Format Burkina Faso : 8 chiffres (ex. 70 12 34 56) ou +226 70 12 34 56.</p>
       </div>
 
       <input type="hidden" name="country" value="Burkina Faso">
@@ -33,17 +34,6 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="phone">Téléphone</label>
-        <input class="form-control" id="phone" name="phone" type="tel" placeholder="+226 70 12 34 56" value="{{ form_data.phone }}" required autocomplete="tel">
-        <p class="form-hint">Format Burkina Faso : 8 chiffres (ex. 70 12 34 56) ou +226 70 12 34 56.</p>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="referral_code">Code de parrainage <span class="muted">(optionnel)</span></label>
-        <input class="form-control" id="referral_code" name="referral_code" type="text" placeholder="ABC12345" value="{{ form_data.referral_code }}" autocomplete="off">
-      </div>
-
-      <div class="form-group">
         <label class="form-label" for="password">Mot de passe</label>
         <input class="form-control" id="password" name="password" type="password" placeholder="6 caractères minimum" required minlength="6" autocomplete="new-password">
       </div>
@@ -51,6 +41,11 @@
       <div class="form-group">
         <label class="form-label" for="confirm_password">Confirmation du mot de passe</label>
         <input class="form-control" id="confirm_password" name="confirm_password" type="password" placeholder="Répétez le mot de passe" required autocomplete="new-password">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="referral_code">Code de parrainage <span class="muted">(optionnel)</span></label>
+        <input class="form-control" id="referral_code" name="referral_code" type="text" placeholder="ABC12345" value="{{ form_data.referral_code }}" autocomplete="off">
       </div>
 
       <label class="check-row">

@@ -26,7 +26,6 @@ def _valid_phone(phone: str) -> bool:
 def _validate_registration(form) -> tuple[list, dict]:
     """Validation serveur stricte. Ne fait JAMAIS confiance au JS."""
     errors = []
-    username = (form.get("username") or "").strip()
     phone = (form.get("phone") or "").strip()
     country = (form.get("country") or "").strip()
     ref_code = (form.get("referral_code") or "").strip().upper()
@@ -34,25 +33,24 @@ def _validate_registration(form) -> tuple[list, dict]:
     confirm = form.get("confirm_password") or ""
     accept = form.get("accept")
 
-    if len(username) < 3:
-        errors.append("Le nom d'utilisateur doit contenir au moins 3 caractères.")
-    if " " in username:
-        errors.append("Le nom d'utilisateur ne doit pas contenir d'espaces.")
+    cleaned_phone = _clean_phone(phone)
+
     if not country:
         errors.append("Veuillez sélectionner votre pays.")
     if not phone:
         errors.append("Le numéro de téléphone est requis.")
     elif not _valid_phone(phone):
         errors.append("Numéro de téléphone invalide (ex. +226 70 12 34 56).")
+    else:
+        # L'identifiant est le numéro : il doit être unique.
+        if User.query.filter_by(phone=cleaned_phone).first():
+            errors.append("Ce numéro de téléphone est déjà utilisé.")
     if len(password) < 6:
         errors.append("Le mot de passe doit contenir au moins 6 caractères.")
     if password != confirm:
         errors.append("Les mots de passe ne correspondent pas.")
     if not accept:
         errors.append("Vous devez accepter les conditions d'utilisation.")
-
-    if User.query.filter_by(username=username).first():
-        errors.append("Ce nom d'utilisateur est déjà utilisé.")
 
     referrer = None
     if ref_code:
@@ -62,9 +60,10 @@ def _validate_registration(form) -> tuple[list, dict]:
         elif referrer.is_banned:
             errors.append("Ce parrain n'est plus disponible.")
 
+    # Le nom d'utilisateur (interne) est généré depuis le numéro de téléphone.
     data = {
-        "username": username,
-        "phone": _clean_phone(phone),
+        "username": cleaned_phone,
+        "phone": cleaned_phone,
         "country": country,
         "referral_code": ref_code,
         "password": password,
@@ -80,12 +79,11 @@ def register():
 
     # Pré-remplissage quand on arrive via /inscription?ref=ABC123
     ref = (request.args.get("ref") or "").strip().upper()
-    form_data = {"username": "", "phone": "", "country": "Burkina Faso", "referral_code": ref}
+    form_data = {"phone": "", "country": "Burkina Faso", "referral_code": ref}
 
     if request.method == "POST":
         errors, data = _validate_registration(request.form)
         form_data.update({
-            "username": data["username"],
             "phone": data["phone"],
             "country": data["country"],
             "referral_code": data["referral_code"],
