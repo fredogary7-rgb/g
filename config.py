@@ -80,6 +80,14 @@ class Config:
     PAYMENT_METHODS = ["Orange Money", "MTN Mobile Money", "Moov Money", "Wave"]
     WITHDRAWAL_METHODS = ["Orange Money", "MTN Mobile Money", "Moov Money", "Wave", "Banque"]
 
+    # --- Initialisation automatique (idempotente) au démarrage ---
+    # Crée les tables manquantes et insère les produits si la base est vide.
+    AUTO_INIT_DB = True
+    # Compte admin créé automatiquement UNIQUEMENT si ADMIN_PASSWORD est défini.
+    ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@fanta.app")
+    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")  # None = pas de création auto
+
     # --- Parrainage : taux affichés ---
     @staticmethod
     def referral_rate(level: int):

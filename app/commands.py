@@ -25,8 +25,8 @@ def _seed_products():
 
 def _seed_admin():
     from app.models import User, db, ensure_referral_code_unique, generate_referral_code
-    username = "admin"
-    email = "admin@fanta.app"
+    username = os.getenv("ADMIN_USERNAME", "admin")
+    email = os.getenv("ADMIN_EMAIL", "admin@fanta.app")
     admin = User.query.filter_by(username=username).first()
     if admin is not None:
         return admin, False

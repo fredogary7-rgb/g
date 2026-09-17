@@ -59,6 +59,31 @@ Compte administrateur créé par `seed` : **admin** / **Admin@1234** (changez-le
 | `flask --app run.py seed` | Insérer produits + admin |
 | `flask --app run.py process-income` | Créditer un jour de revenu aux produits actifs |
 
+## Déploiement en production
+
+L'application est prête pour **Render**, **Railway**, **Fly.io**, **Koyeb**, etc.
+
+- **Serveur WSGI** : `gunicorn` (installé automatiquement hors Windows grâce à
+  `requirements.txt`). Point d'entrée : `wsgi.py`.
+- **Commande de démarrage** (ou `Procfile`) :
+  `gunicorn wsgi:app --bind 0.0.0.0:$PORT`
+- **Docker** : un `Dockerfile` + `.dockerignore` sont fournis.
+
+Variables d'environnement requises sur l'hébergeur :
+
+| Variable | Rôle |
+| --- | --- |
+| `DATABASE_URL` | URL PostgreSQL Neon |
+| `SECRET_KEY` | chaîne longue et aléatoire |
+| `PAYMENT_MODE` | `sandbox` (défaut) |
+| `ADMIN_PASSWORD` | (recommandé) crée le compte admin au démarrage |
+| `ADMIN_USERNAME` / `ADMIN_EMAIL` | identifiants admin (défaut `admin` / `admin@fanta.app`) |
+
+> Au démarrage, l'app crée **automatiquement** les tables manquantes et insère
+> les 8 produits si la base est vide (`AUTO_INIT_DB=True`). Aucune table
+> existante n'est supprimée. Le compte admin n'est créé que si
+> `ADMIN_PASSWORD` est défini.
+
 ## Tests
 
 ```bash

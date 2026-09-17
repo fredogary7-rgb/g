@@ -85,8 +85,39 @@ def create_app(config_class=Config):
         flash("Session expirée ou jeton de sécurité invalide. Réessayez.", "error")
         return redirect(request.referrer or url_for("main.home"))
 
+    # --- Initialisation automatique et idempotente de la base ---
+    if app.config.get("AUTO_INIT_DB", True):
+        _auto_init(app)
+
     # --- Commandes CLI ---
     from app import commands
     commands.register(app)
 
     return app
+
+
+def _auto_init(app):
+    """Crée les tables manquantes et insère les données initiales (sans écraser)."""
+    with app.app_context():
+        db.create_all()
+
+        from app.models import Product
+        if Product.query.count() == 0:
+            from app.seed_data import PRODUCTS_SEED
+            for data in PRODUCTS_SEED:
+                db.session.add(Product(**data))
+            db.session.commit()
+
+        admin_password = app.config.get("ADMIN_PASSWORD")
+        if admin_password and User.query.filter_by(is_admin=True).count() == 0:
+            from app.models import ensure_referral_code_unique, generate_referral_code
+            admin = User(
+                username=app.config.get("ADMIN_USERNAME", "admin"),
+                email=app.config.get("ADMIN_EMAIL", "admin@fanta.app"),
+                is_admin=True,
+                referral_code=ensure_referral_code_unique(generate_referral_code()),
+            )
+            admin.set_password(admin_password)
+            db.session.add(admin)
+            db.session.commit()
+
