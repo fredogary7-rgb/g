@@ -64,9 +64,10 @@ Compte administrateur créé par `seed` : **admin** / **Admin@1234** (changez-le
 L'application est prête pour **Render**, **Railway**, **Fly.io**, **Koyeb**, etc.
 
 - **Serveur WSGI** : `gunicorn` (installé automatiquement hors Windows grâce à
-  `requirements.txt`). Point d'entrée : `wsgi.py`.
+  `requirements.txt`). Point d'entrée : `entrypoint.py` (le port est lu en
+  Python via `PORT`, donc pas de souci d'expansion `$PORT`).
 - **Commande de démarrage** (ou `Procfile`) :
-  `gunicorn wsgi:app --bind 0.0.0.0:$PORT`
+  `python entrypoint.py`
 - **Docker** : un `Dockerfile` + `.dockerignore` sont fournis.
 
 Variables d'environnement requises sur l'hébergeur :

@@ -12,5 +12,5 @@ COPY . .
 
 EXPOSE 8000
 
-# $PORT est fourni par Railway / Render / Fly.io ; 8000 en fallback.
-CMD gunicorn wsgi:app --bind 0.0.0.0:${PORT:-8000}
+# Le port est résolu en Python (variable PORT) -> aucune expansion shell requise.
+CMD ["python", "entrypoint.py"]
