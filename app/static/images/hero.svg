@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="Fanta">
-  <rect width="640" height="300" rx="28" fill="#FF6B00"/>
-  <circle cx="560" cy="60" r="110" fill="#FF8A35" opacity=".55"/>
-  <circle cx="70" cy="250" r="90" fill="#FFC640" opacity=".5"/>
-  <circle cx="600" cy="250" r="30" fill="#FFF2C9" opacity=".35"/>
-  <circle cx="180" cy="60" r="20" fill="#ffffff" opacity=".3"/>
+  <rect width="640" height="300" rx="28" fill="#191C1F"/>
+  <circle cx="560" cy="60" r="110" fill="#2E5BFF" opacity=".35"/>
+  <circle cx="70" cy="250" r="90" fill="#7A5CFF" opacity=".25"/>
+  <circle cx="600" cy="250" r="30" fill="#ffffff" opacity=".09"/>
+  <circle cx="180" cy="60" r="20" fill="#ffffff" opacity=".12"/>
   <text x="80" y="170" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="120" fill="#ffffff" letter-spacing="4">FANTA</text>
-  <text x="84" y="228" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="34" fill="#ffffff" opacity=".95">L'e&#769;nergie du plaisir</text>
+  <text x="84" y="228" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="34" fill="#2E5BFF">L'&#233;nergie du plaisir</text>
 </svg>

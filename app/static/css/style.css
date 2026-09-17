@@ -4,27 +4,27 @@
    ============================================================ */
 
 :root {
-  --fanta-orange: #ff6b00;
-  --fanta-orange-soft: #ff8a35;
-  --fanta-orange-deep: #d84f00;
-  --fanta-amber: #ffb020;
-  --fanta-yellow: #ffc640;
-  --fanta-cream: #fff8ef;
-  --fanta-cream-2: #fff2e2;
-  --fanta-ink: #201a15;
-  --fanta-ink-soft: #5c5347;
-  --fanta-muted: #94897b;
-  --fanta-line: #f2e6d8;
+  --fanta-orange: #191c1f;
+  --fanta-orange-soft: #3a3f45;
+  --fanta-orange-deep: #2e5bff;
+  --fanta-amber: #7a5cff;
+  --fanta-yellow: #5b7cfb;
+  --fanta-cream: #f5f7fa;
+  --fanta-cream-2: #eef2f7;
+  --fanta-ink: #101418;
+  --fanta-ink-soft: #4a5568;
+  --fanta-muted: #8a94a6;
+  --fanta-line: #e4e8ee;
   --fanta-white: #ffffff;
 
   --green: #1f9d55;
   --green-bg: #e7f6ec;
   --red: #d64545;
   --red-bg: #fdeaea;
-  --amber: #c77700;
-  --amber-bg: #fff3d6;
-  --blue: #006ba6;
-  --blue-bg: #e3f1fb;
+  --amber: #b7791f;
+  --amber-bg: #fdf3d6;
+  --blue: #2e5bff;
+  --blue-bg: #e8eeff;
 
   --radius-sm: 10px;
   --radius: 16px;
@@ -47,7 +47,7 @@ body {
   margin: 0;
   font-family: var(--font);
   color: var(--fanta-ink);
-  background: #efe5d8;
+  background: #e9edf2;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
 }
@@ -211,7 +211,7 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 .auth-wrap { min-height: 100dvh; background: var(--fanta-cream); }
 .auth-hero {
   position: relative; overflow: hidden; color: #fff;
-  background: linear-gradient(165deg, #ff9738 0%, #ff6b00 55%, #e25500 100%);
+  background: linear-gradient(165deg, #3b5bff 0%, #1d2b53 55%, #101418 100%);
   padding: 34px 22px 74px;
 }
 .auth-hero::after {
@@ -220,7 +220,7 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 }
 .auth-hero::before {
   content: ""; position: absolute; left: -60px; bottom: -70px; width: 190px; height: 190px;
-  border-radius: 50%; background: rgba(255, 196, 64, 0.35);
+  border-radius: 50%; background: rgba(46, 91, 255, 0.22);
 }
 .auth-hero .inner { position: relative; z-index: 2; }
 .auth-hero .kick { font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.9; }
@@ -245,7 +245,7 @@ textarea.form-control { resize: vertical; min-height: 90px; }
    ============================================================ */
 .hero {
   position: relative; overflow: hidden; color: #fff; border-radius: var(--radius-lg);
-  padding: 22px 20px; background: linear-gradient(160deg, #ff8a35, #ff5e00);
+  padding: 22px 20px; background: linear-gradient(160deg, #23262c, #0f1113);
   box-shadow: var(--shadow);
 }
 .hero::after { content: ""; position: absolute; right: -34px; top: -34px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.12); }
@@ -333,7 +333,7 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 
 .recap { background: var(--fanta-cream-2); border-radius: 16px; padding: 16px; margin-top: 16px; }
 .recap .line { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; }
-.recap .line.total { border-top: 1px dashed #f0c9a0; margin-top: 8px; padding-top: 12px; font-weight: 800; }
+.recap .line.total { border-top: 1px dashed #c9d2e0; margin-top: 8px; padding-top: 12px; font-weight: 800; }
 
 /* -------------------- Stats cards génériques -------------------- */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }

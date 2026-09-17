@@ -9,7 +9,7 @@
     <h1>Bonjour, {{ current_user.username }}</h1>
     <p class="sub">Voici votre aperçu FANTA du jour.</p>
   </div>
-  <img class="hero-img" src="{{ url_for('static', filename='images/fanta-1.svg') }}" alt="Fanta" loading="lazy">
+  <img class="hero-img" src="{{ url_for('static', filename='images/fa.JPG') }}" alt="Fanta" loading="lazy" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/hero.svg') }}'">
 </section>
 
 <div class="balance-card slide-up slide-up-1">

@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-label="Fanta 2">
-  <rect width="500" height="500" rx="42" fill="#F5820B"/>
-  <circle cx="402" cy="110" r="104" fill="#ffffff" opacity=".12"/>
-  <circle cx="88" cy="432" r="82" fill="#FFC640" opacity=".5"/>
-  <circle cx="432" cy="404" r="34" fill="#FFF2C9" opacity=".35"/>
-  <circle cx="96" cy="122" r="20" fill="#ffffff" opacity=".3"/>
-  <circle cx="300" cy="58" r="12" fill="#ffffff" opacity=".25"/>
+  <rect width="500" height="500" rx="42" fill="#191C1F"/>
+  <circle cx="402" cy="110" r="104" fill="#ffffff" opacity=".06"/>
+  <circle cx="88" cy="432" r="82" fill="#2E5BFF" opacity=".28"/>
+  <circle cx="432" cy="404" r="34" fill="#7A5CFF" opacity=".22"/>
+  <circle cx="96" cy="122" r="20" fill="#ffffff" opacity=".14"/>
+  <circle cx="300" cy="58" r="12" fill="#ffffff" opacity=".12"/>
   <text x="250" y="306" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="218" fill="#ffffff">2</text>
   <text x="250" y="436" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="58" letter-spacing="10" fill="#ffffff">FANTA</text>
 </svg>

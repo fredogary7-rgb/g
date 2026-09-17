@@ -104,10 +104,20 @@ def _auto_init(app):
 
         from app.models import Product
         from app.seed_data import PRODUCTS_SEED
-        existing_names = {p.name for p in Product.query.all()}
+        existing = {p.name: p for p in Product.query.all()}
         for data in PRODUCTS_SEED:
-            if data["name"] not in existing_names:
+            p = existing.get(data["name"])
+            if p is None:
                 db.session.add(Product(**data))
+            else:
+                # Synchronise les champs des produits configurés (prix, image, etc.)
+                p.price = data["price"]
+                p.daily_income = data["daily_income"]
+                p.total_income = data["total_income"]
+                p.duration = data["duration"]
+                p.image = data["image"]
+                p.sort_order = data["sort_order"]
+                p.description = data["description"]
         # "Fanta 1" n'est plus au catalogue : on le désactive (sans supprimer
         # les éventuels achats déjà liés).
         fanta1 = Product.query.filter_by(name="Fanta 1").first()
