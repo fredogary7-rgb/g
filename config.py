@@ -80,6 +80,20 @@ class Config:
     PAYMENT_METHODS = ["Orange Money", "MTN Mobile Money", "Moov Money", "Wave"]
     WITHDRAWAL_METHODS = ["Orange Money", "MTN Mobile Money", "Moov Money", "Wave", "Banque"]
 
+    # --- Pays disponibles (inscription / profil) ---
+    COUNTRIES = [
+        "Burkina Faso",
+        "Côte d'Ivoire",
+        "Mali",
+        "Sénégal",
+        "Niger",
+        "Bénin",
+        "Togo",
+        "Guinée",
+        "Cameroun",
+        "France",
+    ]
+
     # --- Initialisation automatique (idempotente) au démarrage ---
     # Crée les tables manquantes et insère les produits si la base est vide.
     AUTO_INIT_DB = True

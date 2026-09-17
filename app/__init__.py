@@ -100,6 +100,7 @@ def _auto_init(app):
     """Crée les tables manquantes et insère les données initiales (sans écraser)."""
     with app.app_context():
         db.create_all()
+        _ensure_schema()
 
         from app.models import Product
         if Product.query.count() == 0:
@@ -120,4 +121,28 @@ def _auto_init(app):
             admin.set_password(admin_password)
             db.session.add(admin)
             db.session.commit()
+
+
+def _ensure_schema():
+    """Migrations légères et idempotentes pour PostgreSQL (Neon).
+
+    Ajoute la colonne ``country`` et rend ``email`` nullable sur un schéma
+    existant. Sans effet sur SQLite (tables recréées en dev/tests).
+    """
+    if db.engine.dialect.name != "postgresql":
+        return
+    from sqlalchemy import inspect, text
+
+    inspector = inspect(db.engine)
+    col_map = {c["name"]: c for c in inspector.get_columns("users")}
+
+    with db.engine.begin() as conn:
+        if "country" not in col_map:
+            conn.execute(text("ALTER TABLE users ADD COLUMN country VARCHAR(60)"))
+        email_col = col_map.get("email")
+        if email_col is not None and not email_col.get("nullable"):
+            conn.execute(text("ALTER TABLE users ALTER COLUMN email DROP NOT NULL"))
+        conn.execute(text(
+            "UPDATE users SET country = 'Burkina Faso' WHERE country IS NULL OR country = ''"
+        ))
 

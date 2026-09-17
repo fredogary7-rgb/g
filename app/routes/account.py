@@ -1,7 +1,7 @@
 """Profil, paramètres et notifications."""
 import re
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.models import Notification, User, db
@@ -25,38 +25,38 @@ def profile():
 @login_required
 def edit_profile():
     user = current_user
+    countries = current_app.config.get("COUNTRIES", ["Burkina Faso"])
     if request.method == "POST":
         username = (request.form.get("username") or "").strip()
-        email = (request.form.get("email") or "").strip().lower()
         phone = (request.form.get("phone") or "").strip()
+        country = (request.form.get("country") or "").strip()
 
         errors = []
         if len(username) < 3:
             errors.append("Le nom d'utilisateur doit contenir au moins 3 caractères.")
-        if not email or "@" not in email:
-            errors.append("Adresse email invalide.")
-        if phone and not _valid_phone(phone):
-            errors.append("Numéro de téléphone invalide.")
+        if not phone:
+            errors.append("Le numéro de téléphone est requis.")
+        elif not _valid_phone(phone):
+            errors.append("Numéro de téléphone invalide (ex. +226 70 12 34 56).")
+        if country not in countries:
+            errors.append("Pays invalide.")
 
         taken_user = User.query.filter(User.username == username, User.id != user.id).first()
         if taken_user:
             errors.append("Ce nom d'utilisateur est déjà utilisé.")
-        taken_email = User.query.filter(User.email == email, User.id != user.id).first()
-        if taken_email:
-            errors.append("Cette adresse email est déjà utilisée.")
 
         if errors:
             for e in errors:
                 flash(e, "error")
         else:
             user.username = username
-            user.email = email
             user.phone = phone or None
+            user.country = country
             db.session.commit()
             flash("Profil mis à jour avec succès.", "success")
             return redirect(url_for("account.profile"))
 
-    return render_template("account/edit_profile.html", user=user)
+    return render_template("account/edit_profile.html", user=user, countries=countries)
 
 
 @account_bp.route("/profil/mot-de-passe", methods=["GET", "POST"])

@@ -53,10 +53,10 @@ with app.app_context():
     db.session.commit()
 
 
-def register(username, email, ref=None):
+def register(username, ref=None):
     # Client frais : l'inscription redirige si un utilisateur est déjà connecté.
     c = app.test_client()
-    data = dict(username=username, email=email, phone="0700000000",
+    data = dict(username=username, phone="+226 70 12 34 56", country="Burkina Faso",
                 password="secret123", confirm_password="secret123", accept="1")
     if ref:
         data["referral_code"] = ref
@@ -79,19 +79,19 @@ check("GET /connexion -> 200", client.get("/connexion").status_code == 200)
 check("CSRF token présent dans le formulaire", b"csrf_token" in client.get("/inscription").data)
 
 # --- Inscription (chaîne A -> B -> C -> D) ---
-check("Inscription A -> 302", register("alice", "alice@test.com").status_code == 302)
+check("Inscription A -> 302", register("alice").status_code == 302)
 with app.app_context():
     a_code = User.query.filter_by(username="alice").first().referral_code
 
-check("Inscription B parrainé par A -> 302", register("bob", "bob@test.com", a_code).status_code == 302)
+check("Inscription B parrainé par A -> 302", register("bob", a_code).status_code == 302)
 with app.app_context():
     b_code = User.query.filter_by(username="bob").first().referral_code
 
-check("Inscription C parrainé par B -> 302", register("carol", "carol@test.com", b_code).status_code == 302)
+check("Inscription C parrainé par B -> 302", register("carol", b_code).status_code == 302)
 with app.app_context():
     c_code = User.query.filter_by(username="carol").first().referral_code
 
-check("Inscription D parrainé par C -> 302", register("dave", "dave@test.com", c_code).status_code == 302)
+check("Inscription D parrainé par C -> 302", register("dave", c_code).status_code == 302)
 with app.app_context():
     d = User.query.filter_by(username="dave").first()
     check("D -> niveau 1 = C", d.referrer.username == "carol")

@@ -35,8 +35,9 @@ class User(UserMixin, TimestampMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True, nullable=False, index=True)
-    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(120), unique=True, nullable=True, index=True)
     phone = db.Column(db.String(30), nullable=True)
+    country = db.Column(db.String(60), default="Burkina Faso", nullable=True)
     password_hash = db.Column(db.String(255), nullable=False)
     referral_code = db.Column(db.String(20), unique=True, nullable=False, index=True)
     referred_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)

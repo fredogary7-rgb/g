@@ -25,13 +25,19 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="email">Email</label>
-        <input class="form-control" id="email" name="email" type="email" placeholder="vous@exemple.com" value="{{ form_data.email }}" required autocomplete="email">
+        <label class="form-label" for="country">Pays</label>
+        <select class="form-control" id="country" name="country" required>
+          <option value="" disabled {{ 'selected' if not form_data.country }}>Choisir un pays</option>
+          {% for c in countries %}
+          <option value="{{ c }}" {{ 'selected' if c == form_data.country }}>{{ c }}</option>
+          {% endfor %}
+        </select>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="phone">Téléphone</label>
-        <input class="form-control" id="phone" name="phone" type="tel" placeholder="+225 07 00 00 00 00" value="{{ form_data.phone }}" autocomplete="tel">
+        <input class="form-control" id="phone" name="phone" type="tel" placeholder="+226 70 12 34 56" value="{{ form_data.phone }}" required autocomplete="tel">
+        <p class="form-hint">Format Burkina Faso : 8 chiffres (ex. 70 12 34 56) ou +226 70 12 34 56.</p>
       </div>
 
       <div class="form-group">

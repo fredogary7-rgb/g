@@ -19,7 +19,7 @@
     {% for u in recent_users %}
     <tr>
       <td><a class="strong" style="color:var(--fanta-orange-deep)" href="{{ url_for('admin.user_detail', user_id=u.id) }}">{{ u.username }}</a></td>
-      <td class="muted">{{ u.email }}</td>
+      <td class="muted">{{ u.phone or u.country or '—' }}</td>
       <td>{{ status('banned') if u.is_banned else status('active') }}</td>
     </tr>
     {% else %}<tr><td colspan="3" class="muted">Aucun inscrit.</td></tr>{% endfor %}

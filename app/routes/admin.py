@@ -1,5 +1,5 @@
 """Espace administrateur : supervision et gestion complète."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 from sqlalchemy import func, or_
 
@@ -108,6 +108,7 @@ def user_detail(user_id):
         purchases=purchases,
         deposits=deposits,
         withdrawals=withdrawals,
+        countries=current_app.config.get("COUNTRIES", ["Burkina Faso"]),
     )
 
 
@@ -141,20 +142,18 @@ def unban_user(user_id):
 def edit_user(user_id):
     user = db.get_or_404(User, user_id)
     username = (request.form.get("username") or "").strip()
-    email = (request.form.get("email") or "").strip().lower()
     phone = (request.form.get("phone") or "").strip()
+    country = (request.form.get("country") or "").strip()
 
     if len(username) < 3:
         flash("Nom d'utilisateur trop court.", "error")
     elif User.query.filter(User.username == username, User.id != user.id).first():
         flash("Nom d'utilisateur déjà pris.", "error")
-    elif User.query.filter(User.email == email, User.id != user.id).first():
-        flash("Email déjà utilisé.", "error")
     else:
         user.username = username
-        user.email = email
         user.phone = phone or None
-        _log("edit_user", "user", user.id, f"{username} / {email}")
+        user.country = country or "Burkina Faso"
+        _log("edit_user", "user", user.id, f"{username} / {country}")
         db.session.commit()
         flash("Utilisateur mis à jour.", "success")
 

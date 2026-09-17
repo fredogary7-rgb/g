@@ -1,16 +1,25 @@
 """Authentification : inscription, connexion, déconnexion."""
 import re
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy import or_
 
 from app.models import Referral, User, db, ensure_referral_code_unique, generate_referral_code
 
 auth_bp = Blueprint("auth", __name__, url_prefix="")
 
 
+def _clean_phone(phone: str) -> str:
+    """Normalise un numéro : conserve + et chiffres, retire les espaces/tirets/etc."""
+    return re.sub(r"[^\d+]", "", phone or "").strip()
+
+
 def _valid_phone(phone: str) -> bool:
     digits = re.sub(r"\D", "", phone or "")
+    if not digits:
+        return False
+    # Burkina Faso : 8 chiffres en local ; 11 avec l'indicatif +226.
     return 8 <= len(digits) <= 15
 
 
@@ -18,8 +27,8 @@ def _validate_registration(form) -> tuple[list, dict]:
     """Validation serveur stricte. Ne fait JAMAIS confiance au JS."""
     errors = []
     username = (form.get("username") or "").strip()
-    email = (form.get("email") or "").strip().lower()
     phone = (form.get("phone") or "").strip()
+    country = (form.get("country") or "").strip()
     ref_code = (form.get("referral_code") or "").strip().upper()
     password = form.get("password") or ""
     confirm = form.get("confirm_password") or ""
@@ -29,10 +38,12 @@ def _validate_registration(form) -> tuple[list, dict]:
         errors.append("Le nom d'utilisateur doit contenir au moins 3 caractères.")
     if " " in username:
         errors.append("Le nom d'utilisateur ne doit pas contenir d'espaces.")
-    if not email or "@" not in email or "." not in email.split("@")[-1]:
-        errors.append("Adresse email invalide.")
-    if phone and not _valid_phone(phone):
-        errors.append("Numéro de téléphone invalide (8 à 15 chiffres).")
+    if not country:
+        errors.append("Veuillez sélectionner votre pays.")
+    if not phone:
+        errors.append("Le numéro de téléphone est requis.")
+    elif not _valid_phone(phone):
+        errors.append("Numéro de téléphone invalide (ex. +226 70 12 34 56).")
     if len(password) < 6:
         errors.append("Le mot de passe doit contenir au moins 6 caractères.")
     if password != confirm:
@@ -42,8 +53,6 @@ def _validate_registration(form) -> tuple[list, dict]:
 
     if User.query.filter_by(username=username).first():
         errors.append("Ce nom d'utilisateur est déjà utilisé.")
-    if User.query.filter_by(email=email).first():
-        errors.append("Cette adresse email est déjà utilisée.")
 
     referrer = None
     if ref_code:
@@ -55,8 +64,8 @@ def _validate_registration(form) -> tuple[list, dict]:
 
     data = {
         "username": username,
-        "email": email,
-        "phone": phone,
+        "phone": _clean_phone(phone),
+        "country": country,
         "referral_code": ref_code,
         "password": password,
         "referrer": referrer,
@@ -69,16 +78,18 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
 
+    countries = current_app.config.get("COUNTRIES", ["Burkina Faso"])
+
     # Pré-remplissage quand on arrive via /inscription?ref=ABC123
     ref = (request.args.get("ref") or "").strip().upper()
-    form_data = {"username": "", "email": "", "phone": "", "referral_code": ref}
+    form_data = {"username": "", "phone": "", "country": "Burkina Faso", "referral_code": ref}
 
     if request.method == "POST":
         errors, data = _validate_registration(request.form)
         form_data.update({
             "username": data["username"],
-            "email": data["email"],
             "phone": data["phone"],
+            "country": data["country"],
             "referral_code": data["referral_code"],
         })
         if errors:
@@ -87,8 +98,9 @@ def register():
         else:
             user = User(
                 username=data["username"],
-                email=data["email"],
+                email=None,
                 phone=data["phone"] or None,
+                country=data["country"],
                 referral_code=ensure_referral_code_unique(generate_referral_code()),
             )
             if data["referrer"] is not None:
@@ -116,7 +128,9 @@ def register():
             flash("Compte créé avec succès. Bienvenue sur FANTA !", "success")
             return redirect(url_for("main.dashboard"))
 
-    return render_template("auth/inscription.html", ref=ref, form_data=form_data)
+    return render_template(
+        "auth/inscription.html", ref=ref, form_data=form_data, countries=countries
+    )
 
 
 @auth_bp.route("/connexion", methods=["GET", "POST"])
@@ -129,8 +143,14 @@ def login():
         password = request.form.get("password") or ""
         remember = request.form.get("remember") == "on"
 
+        ident_phone = _clean_phone(identifier)
         user = User.query.filter(
-            (User.username == identifier) | (User.email == identifier.lower())
+            or_(
+                User.username == identifier,
+                User.email == identifier.lower(),
+                User.phone == identifier,
+                User.phone == ident_phone,
+            )
         ).first()
 
         if user and user.check_password(password):

@@ -23,7 +23,7 @@
 {% for m in level1 %}
 <div class="member-card slide-up">
   <span class="avatar">{{ m.username[:1]|upper }}</span>
-  <div class="member-info"><div class="n">{{ m.username }}</div><div class="s ellipsis">{{ m.email }}</div></div>
+  <div class="member-info"><div class="n">{{ m.username }}</div><div class="s ellipsis">{{ m.phone or '—' }}</div></div>
   <span class="badge badge-neutral">N1</span>
 </div>
 {% else %}
@@ -36,7 +36,7 @@
 {% for m in level2 %}
 <div class="member-card slide-up">
   <span class="avatar sm">{{ m.username[:1]|upper }}</span>
-  <div class="member-info"><div class="n">{{ m.username }}</div><div class="s ellipsis">{{ m.email }}</div></div>
+  <div class="member-info"><div class="n">{{ m.username }}</div><div class="s ellipsis">{{ m.phone or '—' }}</div></div>
   <span class="badge badge-neutral">N2</span>
 </div>
 {% endfor %}
@@ -47,7 +47,7 @@
 {% for m in level3 %}
 <div class="member-card slide-up">
   <span class="avatar sm">{{ m.username[:1]|upper }}</span>
-  <div class="member-info"><div class="n">{{ m.username }}</div><div class="s ellipsis">{{ m.email }}</div></div>
+  <div class="member-info"><div class="n">{{ m.username }}</div><div class="s ellipsis">{{ m.phone or '—' }}</div></div>
   <span class="badge badge-neutral">N3</span>
 </div>
 {% endfor %}

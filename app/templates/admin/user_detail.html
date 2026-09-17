@@ -13,7 +13,7 @@
     <span class="avatar lg">{{ user.username[:1]|upper }}</span>
     <div>
       <div class="strong" style="font-size:17px">{{ user.username }} {% if user.is_admin %}<span class="badge badge-info">Admin</span>{% endif %}</div>
-      <div class="muted small">{{ user.email }}</div>
+      <div class="muted small">{{ user.country or 'Burkina Faso' }} · {{ user.phone or '—' }}</div>
       <div class="small mt-1">{{ status('banned') if user.is_banned else status('active') }}</div>
     </div>
   </div>
@@ -32,7 +32,9 @@
   <form method="post" action="{{ url_for('admin.edit_user', user_id=user.id) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="form-group"><label class="form-label">Nom d'utilisateur</label><input class="form-control" name="username" value="{{ user.username }}"></div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-control" name="email" value="{{ user.email }}"></div>
+    <div class="form-group"><label class="form-label">Pays</label><select class="form-control" name="country">
+      {% for c in countries %}<option value="{{ c }}" {{ 'selected' if c == user.country }}>{{ c }}</option>{% endfor %}
+    </select></div>
     <div class="form-group"><label class="form-label">Téléphone</label><input class="form-control" name="phone" value="{{ user.phone or '' }}"></div>
     <button class="btn btn-primary btn-sm" type="submit">Enregistrer</button>
   </form>
@@ -56,7 +58,7 @@
 <div class="section-title"><h2>Équipe ({{ level1|length }} directs)</h2></div>
 <div class="card card-pad">
   {% for m in level1 %}
-  <div class="member-card" style="margin-top:8px"><span class="avatar sm">{{ m.username[:1]|upper }}</span><div class="member-info"><div class="n">{{ m.username }}</div><div class="s">{{ m.email }}</div></div></div>
+  <div class="member-card" style="margin-top:8px"><span class="avatar sm">{{ m.username[:1]|upper }}</span><div class="member-info"><div class="n">{{ m.username }}</div><div class="s">{{ m.phone or '—' }}</div></div></div>
   {% else %}<p class="muted small">Aucun filleul direct.</p>{% endfor %}
 </div>
 

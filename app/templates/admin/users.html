@@ -19,7 +19,7 @@
     <tr>
       <td>
         <a class="strong" style="color:var(--fanta-orange-deep)" href="{{ url_for('admin.user_detail', user_id=u.id) }}">{{ u.username }}</a>
-        <div class="muted small">{{ u.email }}</div>
+        <div class="muted small">{{ u.phone or u.country or '—' }}</div>
       </td>
       <td><b>{{ u.balance|money }}</b></td>
       <td>{{ status('banned') if u.is_banned else status('active') }}</td>
