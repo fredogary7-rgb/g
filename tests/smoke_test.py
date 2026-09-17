@@ -31,6 +31,7 @@ class TestConfig:
     REFERRAL_LEVEL_3 = 0.01
     REFERRAL_LEVELS = [0.18, 0.02, 0.01]
     COUNTRIES = ["Burkina Faso"]
+    AUTO_INIT_DB = False
 
 
 app = create_app(TestConfig)

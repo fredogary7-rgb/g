@@ -132,7 +132,7 @@ def _auto_init(app):
         if admin is None:
             admin = User(
                 username=admin_username,
-                email=app.config.get("ADMIN_EMAIL", "admin@fanta.app"),
+                email=None,
                 phone=admin_phone or None,
                 country="Burkina Faso",
                 is_admin=True,

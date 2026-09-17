@@ -38,7 +38,6 @@ def overview():
 @wallet_bp.route("/depot", methods=["GET", "POST"])
 @login_required
 def deposit():
-    preset_amounts = [7000, 12000, 21000, 25000, 35000, 50000, 100000]
     account_number = current_app.config.get("OM_ACCOUNT_NUMBER", "07940067")
     account_name = current_app.config.get("OM_ACCOUNT_NAME", "Toure Ramata")
 
@@ -66,7 +65,6 @@ def deposit():
             ussd = f"*144*2*1*{account_number}*{int(amount_dec)}#"
             return render_template(
                 "wallet/deposit.html",
-                preset_amounts=preset_amounts,
                 account_number=account_number,
                 account_name=account_name,
                 deposit=dep,
@@ -75,7 +73,6 @@ def deposit():
 
     return render_template(
         "wallet/deposit.html",
-        preset_amounts=preset_amounts,
         account_number=account_number,
         account_name=account_name,
         deposit=None,

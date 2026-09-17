@@ -59,12 +59,7 @@
     <p class="small muted">Choisissez un montant, puis confirmez votre numéro Orange Money.</p>
 
     <label class="form-label mt-2">Montant de la recharge ({{ CURRENCY }})</label>
-    <div class="amt-chips">
-      {% for a in preset_amounts %}
-      <button type="button" class="chip amt-chip" data-amount="{{ a }}">{{ a|number }}</button>
-      {% endfor %}
-    </div>
-    <input class="form-control mt-2" id="amount" name="amount" type="number" min="500" step="any" placeholder="Autre montant…" required>
+    <input class="form-control" id="amount" name="amount" type="number" min="500" step="any" placeholder="Saisissez le montant" required>
 
     <button type="button" class="btn btn-primary btn-block mt-3" data-next="step2">{{ icon('arrow-right') }} Continuer</button>
     <p class="small muted center mt-2">Si le paiement n'arrive pas, contactez le support.</p>
@@ -98,10 +93,6 @@
   var amountInput = document.getElementById("amount");
   var summary = document.getElementById("amount-summary");
 
-  function updateActive(active) {
-    document.querySelectorAll(".amt-chip").forEach(function (c) { c.classList.remove("active"); });
-    if (active) active.classList.add("active");
-  }
   function updateSummary() {
     var n = parseInt(amountInput && amountInput.value, 10);
     if (summary) summary.textContent = (n && n > 0) ? n.toLocaleString("fr-FR") + " FCFA" : "";
@@ -115,8 +106,6 @@
   }
 
   document.addEventListener("click", function (e) {
-    var chip = e.target.closest(".amt-chip");
-    if (chip) { if (amountInput) amountInput.value = chip.getAttribute("data-amount"); updateActive(chip); updateSummary(); return; }
     var next = e.target.closest("[data-next]");
     if (next) { showStep(next.getAttribute("data-next")); return; }
     var back = e.target.closest("[data-back]");
