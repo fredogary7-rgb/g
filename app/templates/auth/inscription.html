@@ -8,7 +8,7 @@
     <div class="inner">
       <div class="kick">Bienvenue sur</div>
       <h1>FANTA</h1>
-      <img class="auth-img" src="{{ url_for('static', filename='images/auth.svg') }}" alt="Boisson Fanta orange" loading="eager">
+      <img class="auth-img" src="{{ url_for('static', filename='images/fa3.JPG') }}" alt="Fanta" loading="eager" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/auth.svg') }}'">
     </div>
   </div>
 
@@ -19,18 +19,19 @@
     <form method="post" novalidate>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+      <input type="hidden" name="country" value="Burkina Faso">
+      <div class="form-group">
+        <label class="form-label">Pays</label>
+        <div class="row" style="align-items:center;gap:10px;background:#fff;border:1.5px solid var(--fanta-line);border-radius:10px;padding:10px 15px">
+          <img src="{{ url_for('static', filename='images/burkina-faso.svg') }}" alt="Drapeau du Burkina Faso" width="34" height="23" style="border-radius:4px;border:1px solid var(--fanta-line);object-fit:cover" onerror="this.onerror=null;this.replaceWith(document.createTextNode('🇧🇫'))">
+          <span class="strong">Burkina Faso</span>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label" for="phone">Numéro de téléphone</label>
         <input class="form-control" id="phone" name="phone" type="tel" placeholder="+226 70 12 34 56" value="{{ form_data.phone }}" required autocomplete="tel">
         <p class="form-hint">Format Burkina Faso : 8 chiffres (ex. 70 12 34 56) ou +226 70 12 34 56.</p>
-      </div>
-
-      <input type="hidden" name="country" value="Burkina Faso">
-      <div class="form-group">
-        <label class="form-label">Pays</label>
-        <div class="row" style="align-items:center;gap:8px;background:#fff;border:1.5px solid var(--fanta-line);border-radius:10px;padding:12px 15px">
-          <span>🇧🇫</span><span class="strong">Burkina Faso</span>
-        </div>
       </div>
 
       <div class="form-group">

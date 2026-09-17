@@ -226,8 +226,9 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 .auth-hero .kick { font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.9; }
 .auth-hero h1 { font-size: 34px; margin-top: 8px; }
 .auth-hero img.auth-img {
-  position: relative; z-index: 2; width: 210px; margin: 18px auto 0;
-  filter: drop-shadow(0 20px 30px rgba(120, 40, 0, 0.35));
+  position: relative; z-index: 2; width: 200px; margin: 18px auto 0;
+  border-radius: 18px;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.35));
   animation: pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .auth-card {

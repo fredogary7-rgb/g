@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600" role="img" aria-label="Drapeau du Burkina Faso">
+  <rect width="900" height="300" fill="#EF2B2D"/>
+  <rect y="300" width="900" height="300" fill="#009E49"/>
+  <polygon fill="#FCD116" points="450,150 483.7,253.6 592.7,253.6 504.5,317.7 538.2,421.3 450,357.3 361.8,421.3 395.5,317.7 307.3,253.6 416.3,253.6"/>
+</svg>
