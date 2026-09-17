@@ -129,6 +129,19 @@ with app.app_context():
     dave = User.query.filter_by(phone=PHONE["dave"]).first()
     check("Solde dave = 8000", float(dave.balance) == 8000.0)
 
+    # Commissions de parrainage créées et créditées à la validation du dépôt
+    commissions = Commission.query.filter_by(deposit_id=dep_id).order_by(Commission.level).all()
+    check("3 commissions créées (pas de doublon)", len(commissions) == 3)
+    if len(commissions) == 3:
+        check("N1 -> bénéficiaire carol", commissions[0].level == 1 and commissions[0].beneficiary.phone == PHONE["carol"])
+        check("N1 -> taux 18%", float(commissions[0].rate) == 0.18)
+        check("N1 -> montant 1440", float(commissions[0].amount) == 1440.0)
+        check("N2 -> bénéficiaire bob", commissions[1].level == 2 and commissions[1].beneficiary.phone == PHONE["bob"])
+        check("N3 -> bénéficiaire alice", commissions[2].level == 3 and commissions[2].beneficiary.phone == PHONE["alice"])
+
+    carol = User.query.filter_by(phone=PHONE["carol"]).first()
+    check("Solde carol = 1440 (commission auto-approuvée)", float(carol.balance) == 1440.0)
+
 # --- dave achète le produit 1 (Fanta 2 = 8000) ---
 logout()
 login(PHONE["dave"])
@@ -139,28 +152,6 @@ with app.app_context():
     purchase = Purchase.query.filter_by(user_id=dave.id).first()
     check("Achat enregistré", purchase is not None)
     check("Solde dave débité (0)", float(dave.balance) == 0.0)
-    purchase_id = purchase.id
-
-    commissions = Commission.query.filter_by(purchase_id=purchase.id).order_by(Commission.level).all()
-    check("3 commissions créées (pas de doublon)", len(commissions) == 3)
-    if len(commissions) == 3:
-        check("N1 -> bénéficiaire carol", commissions[0].level == 1 and commissions[0].beneficiary.phone == PHONE["carol"])
-        check("N1 -> taux 18%", float(commissions[0].rate) == 0.18)
-        check("N1 -> montant 1440", float(commissions[0].amount) == 1440.0)
-        check("N2 -> bénéficiaire bob", commissions[1].level == 2 and commissions[1].beneficiary.phone == PHONE["bob"])
-        check("N3 -> bénéficiaire alice", commissions[2].level == 3 and commissions[2].beneficiary.phone == PHONE["alice"])
-
-# --- Approuver une commission ---
-with app.app_context():
-    comm_id = Commission.query.filter_by(purchase_id=purchase_id, level=1).first().id
-logout()
-login("admin", "admin123")
-client.post(f"/admin/commissions/{comm_id}/approve", follow_redirects=False)
-with app.app_context():
-    comm = db.session.get(Commission, comm_id)
-    check("Commission approuvée", comm.status == "approved")
-    carol = User.query.filter_by(phone=PHONE["carol"]).first()
-    check("Solde carol = 1440", float(carol.balance) == 1440.0)
 
 
 # --- Retrait : création + rejet (carol dispose de 1440) ---

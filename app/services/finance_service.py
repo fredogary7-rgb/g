@@ -56,10 +56,7 @@ def purchase_product(user, product):
     db.session.add(purchase)
     debit_balance(user, price)
     record_transaction(user, "purchase", -price, reference, f"Achat du produit {product.name}")
-    db.session.flush()  # récupère purchase.id pour les commissions
-
-    from app.services.referral_service import create_commissions_for_purchase
-    commissions = create_commissions_for_purchase(purchase)
+    db.session.flush()
 
     from app.services.notification_service import notify
     notify(
@@ -69,7 +66,7 @@ def purchase_product(user, product):
         f"{product.name} a été activé avec succès.",
         url_for("main.product_detail", product_id=product.id),
     )
-    return purchase, commissions
+    return purchase
 
 
 def approve_deposit(deposit, note=None):
@@ -89,6 +86,10 @@ def approve_deposit(deposit, note=None):
         user, "deposit", amount, deposit.reference,
         f"Dépôt validé ({deposit.method})",
     )
+
+    # Les commissions de parrainage sont distribuées après validation du dépôt.
+    from app.services.referral_service import create_commissions_for_deposit
+    create_commissions_for_deposit(deposit)
 
     from app.services.notification_service import notify
     notify(

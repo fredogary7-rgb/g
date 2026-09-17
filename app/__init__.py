@@ -157,15 +157,23 @@ def _ensure_schema():
     from sqlalchemy import inspect, text
 
     inspector = inspect(db.engine)
-    col_map = {c["name"]: c for c in inspector.get_columns("users")}
+    users_cols = {c["name"]: c for c in inspector.get_columns("users")}
+    commissions_cols = {c["name"]: c for c in inspector.get_columns("commissions")}
 
     with db.engine.begin() as conn:
-        if "country" not in col_map:
+        if "country" not in users_cols:
             conn.execute(text("ALTER TABLE users ADD COLUMN country VARCHAR(60)"))
-        email_col = col_map.get("email")
+        email_col = users_cols.get("email")
         if email_col is not None and not email_col.get("nullable"):
             conn.execute(text("ALTER TABLE users ALTER COLUMN email DROP NOT NULL"))
         conn.execute(text(
             "UPDATE users SET country = 'Burkina Faso' WHERE country IS NULL OR country = ''"
         ))
+
+        # Commissions liées aux dépôts (et purchase_id devient optionnel).
+        if "deposit_id" not in commissions_cols:
+            conn.execute(text("ALTER TABLE commissions ADD COLUMN deposit_id INTEGER"))
+        purchase_col = commissions_cols.get("purchase_id")
+        if purchase_col is not None and not purchase_col.get("nullable"):
+            conn.execute(text("ALTER TABLE commissions ALTER COLUMN purchase_id DROP NOT NULL"))
 

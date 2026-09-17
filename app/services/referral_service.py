@@ -9,12 +9,11 @@ Hiérarchie :
     A (niveau 3)
     └─ B (niveau 2)
        └─ C (niveau 1)
-          └─ D (acheteur)
+          └─ D (déposant)
 
-Lorsqu'un achat est effectué par D, des commissions sont créées pour C (1),
-B (2) et A (3). Chaque commission est créée au statut ``pending`` puis validée
-par l'administrateur (ou annulée). Une référence unique et un contrôle de
-doublon empêchent toute commission dupliquée pour la même opération.
+Lorsqu'un dépôt de D est validé par l'administrateur, des commissions sont
+créées et créditées immédiatement pour C (1), B (2) et A (3). Une référence
+unique et un contrôle de doublon empêchent toute commission dupliquée.
 """
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -28,10 +27,11 @@ def referral_rate(level: int) -> Decimal:
     return Decimal(str(current_app.config["REFERRAL_LEVELS"][level - 1]))
 
 
-def create_commissions_for_purchase(purchase):
-    """Crée les commissions (niveau 1 à 3) liées à un achat, sans doublon."""
-    buyer = purchase.user
-    amount = to_dec(purchase.amount)
+def create_commissions_for_deposit(deposit):
+    """Crée et crédite immédiatement les commissions (niveau 1 à 3) après
+    validation d'un dépôt. Anti-doublon par (deposit, niveau, bénéficiaire)."""
+    buyer = deposit.user
+    amount = to_dec(deposit.amount)
     created = []
 
     for level, referrer in buyer.referral_chain(max_level=3):
@@ -45,7 +45,7 @@ def create_commissions_for_purchase(purchase):
             continue
 
         exists = Commission.query.filter_by(
-            purchase_id=purchase.id,
+            deposit_id=deposit.id,
             level=level,
             beneficiary_id=referrer.id,
         ).first()
@@ -55,14 +55,38 @@ def create_commissions_for_purchase(purchase):
         commission = Commission(
             beneficiary_id=referrer.id,
             source_user_id=buyer.id,
-            purchase_id=purchase.id,
+            deposit_id=deposit.id,
+            purchase_id=None,
             level=level,
             rate=rate,
             amount=commission_amount,
             reference=generate_reference("COM"),
-            status="pending",
+            status="approved",
         )
         db.session.add(commission)
+
+        # Crédit immédiat du bénéficiaire.
+        referrer.total_commission = to_dec(referrer.total_commission) + commission_amount
+        referrer.balance = to_dec(referrer.balance) + commission_amount
+
+        db.session.add(Transaction(
+            user_id=referrer.id,
+            type="commission",
+            amount=commission_amount,
+            balance_after=referrer.balance,
+            reference=commission.reference,
+            description=f"Commission parrainage niveau {level}",
+            status="completed",
+        ))
+
+        from app.services.notification_service import notify
+        notify(
+            referrer.id,
+            "commission",
+            "Nouvelle commission",
+            f"Vous avez reçu {int(commission_amount):,} FCFA de commission (niveau {level}).",
+            "/historique",
+        )
         created.append(commission)
 
     return created

@@ -29,20 +29,48 @@
 <div class="section-title"><h2>Dépôts en attente</h2></div>
 <div class="table-wrap">
   <table class="table">
-    <tr><th>Utilisateur</th><th>Montant</th><th>Réf.</th></tr>
+    <tr><th>Utilisateur</th><th>Montant</th><th>Réf.</th><th>Actions</th></tr>
     {% for d in pending_deposits %}
-    <tr><td>{{ d.user.username }}</td><td><b>{{ d.amount|money }}</b></td><td class="mono">{{ d.reference }}</td></tr>
-    {% else %}<tr><td colspan="3" class="muted">Aucun dépôt en attente.</td></tr>{% endfor %}
+    <tr>
+      <td>{{ d.user.username }}</td><td><b>{{ d.amount|money }}</b></td><td class="mono">{{ d.reference }}</td>
+      <td>
+        <div class="row-actions">
+          <form method="post" action="{{ url_for('admin.deposit_approve', deposit_id=d.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-primary" type="submit">{{ icon('check') }} Valider</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.deposit_reject', deposit_id=d.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-danger" type="submit">{{ icon('x') }} Refuser</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="4" class="muted">Aucun dépôt en attente.</td></tr>{% endfor %}
   </table>
 </div>
 
 <div class="section-title"><h2>Retraits en attente</h2></div>
 <div class="table-wrap">
   <table class="table">
-    <tr><th>Utilisateur</th><th>Montant</th><th>Réf.</th></tr>
+    <tr><th>Utilisateur</th><th>Montant</th><th>Réf.</th><th>Actions</th></tr>
     {% for w in pending_withdrawals %}
-    <tr><td>{{ w.user.username }}</td><td><b>{{ w.amount|money }}</b></td><td class="mono">{{ w.reference }}</td></tr>
-    {% else %}<tr><td colspan="3" class="muted">Aucun retrait en attente.</td></tr>{% endfor %}
+    <tr>
+      <td>{{ w.user.username }}</td><td><b>{{ w.amount|money }}</b></td><td class="mono">{{ w.reference }}</td>
+      <td>
+        <div class="row-actions">
+          <form method="post" action="{{ url_for('admin.withdrawal_approve', withdrawal_id=w.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-primary" type="submit">{{ icon('check') }} Valider</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.withdrawal_reject', withdrawal_id=w.id) }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-danger" type="submit">{{ icon('x') }} Refuser</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="4" class="muted">Aucun retrait en attente.</td></tr>{% endfor %}
   </table>
 </div>
 {% endblock %}
