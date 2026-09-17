@@ -85,6 +85,19 @@ Variables d'environnement requises sur l'hébergeur :
 > existante n'est supprimée. Le compte admin n'est créé que si
 > `ADMIN_PASSWORD` est défini.
 
+### Railway (recommandé)
+
+Un fichier `railway.json` est fourni : il force la commande `python entrypoint.py`
+(port résolu en Python) et utilise Nixpacks. Déployez simplement le dépôt.
+
+Si l'erreur `'$PORT' n'est pas un numéro de port valide` persiste :
+
+1. Ouvrez votre service sur Railway → onglet **Settings**.
+2. Rubrique **Deploy** → **Start Command** : mettez `python entrypoint.py`
+   (ou videz le champ pour que le `Procfile` du dépôt soit utilisé).
+3. Lancez un **nouveau déploiement** (bouton Deploy, pas un simple restart)
+   pour reconstruire l'image avec les nouveaux fichiers.
+
 ## Tests
 
 ```bash
