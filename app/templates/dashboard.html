@@ -31,43 +31,6 @@
 </div>
 
 <div class="section-title slide-up">
-  <h2>Produit en avant</h2>
-</div>
-{% if featured %}
-<a class="card" href="{{ url_for('main.product_detail', product_id=featured.id) }}" style="display:flex;align-items:center;gap:14px;padding:14px">
-  <img src="{{ url_for('static', filename='images/' ~ featured.image) }}" alt="{{ featured.name }}" style="width:74px;height:74px;border-radius:14px;background:var(--fanta-cream-2);object-fit:contain;padding:6px" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
-  <div style="flex:1">
-    <div class="strong" style="font-size:16px">{{ featured.name }}</div>
-    <div class="muted small">{{ featured.duration }} jours · {{ featured.daily_income|money }}/jour</div>
-    <span class="price-tag">{{ featured.price|money }}</span>
-  </div>
-  {{ icon('chevron-right') }}
-</a>
-{% endif %}
-
-<div class="section-title slide-up">
-  <h2>Nos produits</h2>
-  <a class="link" href="{{ url_for('main.products') }}">Tout voir</a>
-</div>
-<div class="product-grid">
-  {% for p in products[:4] %}
-  <a class="product-card" href="{{ url_for('main.product_detail', product_id=p.id) }}">
-    <div class="thumb">
-      <img src="{{ url_for('static', filename='images/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/fanta-product.svg') }}'">
-    </div>
-    <div class="body">
-      <div class="name">{{ p.name }}</div>
-      <div class="price-tag">{{ p.price|money }}</div>
-      <div class="product-specs">
-        <div class="spec-line"><span>Quotidien</span><b>{{ p.daily_income|money }}</b></div>
-        <div class="spec-line"><span>Durée</span><b>{{ p.duration }} jours</b></div>
-      </div>
-    </div>
-  </a>
-  {% endfor %}
-</div>
-
-<div class="section-title slide-up">
   <h2>Activité récente</h2>
   <a class="link" href="{{ url_for('wallet.history') }}">Historique</a>
 </div>

@@ -18,7 +18,8 @@ def _valid_phone(phone):
 @login_required
 def profile():
     user = current_user
-    return render_template("account/profile.html", user=user)
+    whatsapp_url = current_app.config.get("WHATSAPP_GROUP_URL", "")
+    return render_template("account/profile.html", user=user, whatsapp_url=whatsapp_url)
 
 
 @account_bp.route("/profil/modifier", methods=["GET", "POST"])

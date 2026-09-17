@@ -24,6 +24,7 @@
   <a class="menu-item" href="{{ url_for('account.change_password') }}"><span class="m-ic">{{ icon('lock') }}</span><span class="m-txt"><span class="t">Changer mot de passe</span></span>{{ icon('chevron-right', 'chev') }}</a>
   <a class="menu-item" href="{{ url_for('account.settings') }}"><span class="m-ic">{{ icon('settings') }}</span><span class="m-txt"><span class="t">Paramètres</span></span>{{ icon('chevron-right', 'chev') }}</a>
   <a class="menu-item" href="{{ url_for('team.referral') }}"><span class="m-ic">{{ icon('gift') }}</span><span class="m-txt"><span class="t">Parrainage</span></span>{{ icon('chevron-right', 'chev') }}</a>
+  <a class="menu-item" href="{{ whatsapp_url }}" target="_blank" rel="noopener"><span class="m-ic" style="background:#e7f6ec;color:#25d366">{{ icon('users') }}</span><span class="m-txt"><span class="t">Groupe WhatsApp</span><span class="s">Rejoindre la communauté</span></span>{{ icon('chevron-right', 'chev') }}</a>
   <form method="post" action="{{ url_for('auth.logout') }}" style="margin:0">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button class="menu-item" style="width:100%;background:none;border:none;text-align:left;color:var(--red)">

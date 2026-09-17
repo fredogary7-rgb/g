@@ -235,4 +235,4 @@ if failed:
     for f in failed:
         print("  - " + f)
     sys.exit(1)
-print("Tous les tests passent ✓")
+print("Tous les tests passent")

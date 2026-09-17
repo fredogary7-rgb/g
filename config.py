@@ -83,6 +83,10 @@ class Config:
     # --- Dépôt manuel Orange Money (USSD) ---
     OM_ACCOUNT_NUMBER = os.getenv("OM_ACCOUNT_NUMBER", "07940067")
     OM_ACCOUNT_NAME = os.getenv("OM_ACCOUNT_NAME", "Toure Ramata")
+    WHATSAPP_GROUP_URL = os.getenv(
+        "WHATSAPP_GROUP_URL",
+        "https://chat.whatsapp.com/D4yHVRXgYwTDEUvNFn3Lw1?s=cl&p=i&mlu=4&ilr=4",
+    )
 
     # --- Pays disponibles (inscription / profil) ---
     COUNTRIES = [
