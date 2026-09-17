@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "_macros.html" import icon %}
-{% block title %}Dépôt — FANTA{% endblock %}
+{% block title %}Recharger — FANTA{% endblock %}
 
 {% block content %}
 <div class="page-head slide-up">
@@ -8,27 +8,39 @@
   <h1>Recharger</h1>
 </div>
 
-<div class="card card-pad slide-up">
-  <div class="badge badge-warning" style="margin-bottom:12px">Mode SANDBOX — test uniquement</div>
-  <p class="small muted">Votre dépôt sera enregistré comme une demande de test et validé manuellement par l'administrateur. Aucun paiement réel n'est effectué tant que le prestataire officiel n'est pas branché.</p>
+<div class="balance-card slide-up slide-up-1">
+  <div class="lbl">Solde actuel</div>
+  <div class="amount" style="font-size:24px">{{ current_user.balance|money }}</div>
+</div>
 
-  <form method="post" class="mt-2">
+<div class="card card-pad slide-up slide-up-2">
+  <div class="badge badge-warning" style="margin-bottom:12px">Mode SANDBOX — test uniquement</div>
+  <p class="small muted">Choisissez un montant et une méthode. Votre dépôt reste en attente de validation — aucun paiement réel tant que le prestataire officiel n'est pas branché.</p>
+
+  <form method="post" novalidate>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <div class="form-group">
-      <label class="form-label" for="amount">Montant ({{ CURRENCY }})</label>
-      <input class="form-control" id="amount" name="amount" type="number" min="100" step="any" placeholder="Ex : 4000" required>
+    <label class="form-label mt-2">Montant ({{ CURRENCY }})</label>
+    <div class="amt-chips">
+      {% for a in preset_amounts %}
+      <button type="button" class="chip amt-chip" data-amount="{{ a }}">{{ a|number }}</button>
+      {% endfor %}
+    </div>
+    <input class="form-control mt-2" id="amount" name="amount" type="number" min="100" step="any" placeholder="Autre montant…" required>
+
+    <label class="form-label mt-2">Méthode de paiement</label>
+    <div class="pay-methods">
+      {% for m in methods %}
+      <label class="pay-method">
+        <input type="radio" name="method" value="{{ m }}" required>
+        <span class="pm-dot"></span>
+        <span class="pm-txt">{{ m }}</span>
+      </label>
+      {% endfor %}
     </div>
 
-    <div class="form-group">
-      <label class="form-label" for="method">Méthode de paiement</label>
-      <select class="form-control" id="method" name="method" required>
-        <option value="" disabled selected>Choisir une méthode</option>
-        {% for m in methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
-      </select>
-    </div>
-
-    <button class="btn btn-primary btn-block" type="submit">{{ icon('arrow-down') }} Créer le dépôt</button>
+    <button class="btn btn-primary btn-block mt-3" type="submit">{{ icon('arrow-down') }} Créer le dépôt</button>
   </form>
 </div>
 {% endblock %}
+

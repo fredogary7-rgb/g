@@ -36,6 +36,7 @@ def overview():
 @login_required
 def deposit():
     methods = current_app.config.get("PAYMENT_METHODS", [])
+    preset_amounts = [1000, 2000, 4000, 5000, 8000, 10000, 20000, 50000]
     if request.method == "POST":
         amount = (request.form.get("amount") or "").strip()
         method = (request.form.get("method") or "").strip()
@@ -59,7 +60,7 @@ def deposit():
             )
             return redirect(url_for("wallet.history", type="deposit"))
 
-    return render_template("wallet/deposit.html", methods=methods)
+    return render_template("wallet/deposit.html", methods=methods, preset_amounts=preset_amounts)
 
 
 @wallet_bp.route("/retrait", methods=["GET", "POST"])

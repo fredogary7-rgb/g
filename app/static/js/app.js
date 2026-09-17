@@ -92,4 +92,14 @@
     if (!input) return;
     input.type = input.type === "password" ? "text" : "password";
   });
+
+  // Sélection rapide de montant (page dépôt)
+  document.addEventListener("click", function (e) {
+    var chip = e.target.closest(".amt-chip");
+    if (!chip) return;
+    var input = document.getElementById("amount");
+    if (input) input.value = chip.getAttribute("data-amount");
+    document.querySelectorAll(".amt-chip").forEach(function (c) { c.classList.remove("active"); });
+    chip.classList.add("active");
+  });
 })();
