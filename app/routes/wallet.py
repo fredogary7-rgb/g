@@ -1,4 +1,6 @@
 """Portefeuille : solde, dépôt, retrait et historique."""
+import re
+
 from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
@@ -14,6 +16,7 @@ TYPE_LABELS = {
     "income": "Revenus",
     "commission": "Commissions",
     "refund": "Remboursements",
+    "adjustment": "Ajustements",
 }
 
 
@@ -35,32 +38,49 @@ def overview():
 @wallet_bp.route("/depot", methods=["GET", "POST"])
 @login_required
 def deposit():
-    methods = current_app.config.get("PAYMENT_METHODS", [])
-    preset_amounts = [1000, 2000, 4000, 5000, 8000, 10000, 20000, 50000]
+    preset_amounts = [7000, 12000, 21000, 25000, 35000, 50000, 100000]
+    account_number = current_app.config.get("OM_ACCOUNT_NUMBER", "07940067")
+    account_name = current_app.config.get("OM_ACCOUNT_NAME", "Toure Ramata")
+
     if request.method == "POST":
         amount = (request.form.get("amount") or "").strip()
-        method = (request.form.get("method") or "").strip()
+        phone = (request.form.get("phone") or "").strip()
         try:
             amount_dec = to_dec(amount)
         except Exception:
             amount_dec = to_dec(0)
-        if amount_dec <= 0:
-            flash("Veuillez saisir un montant valide.", "error")
-        elif method not in methods:
-            flash("Veuillez choisir une méthode de paiement.", "error")
+
+        digits = re.sub(r"\D", "", phone)
+        if amount_dec < 500:
+            flash("Montant minimum : 500 FCFA.", "error")
+        elif len(digits) < 8:
+            flash("Numéro Orange Money invalide.", "error")
         else:
             from app.services.payment_service import get_provider
             provider = get_provider()
-            dep = provider.create_deposit(current_user, amount_dec, method)
-            db.session.commit()
-            flash(
-                f"Dépôt de test enregistré (référence {dep.reference}). "
-                "Il sera crédité après validation.",
-                "success",
+            dep = provider.create_deposit(
+                current_user, amount_dec, "Orange Money",
+                note=f"Orange Money · n° {phone}",
             )
-            return redirect(url_for("wallet.history", type="deposit"))
+            db.session.commit()
+            ussd = f"*144*2*1*{account_number}*{int(amount_dec)}#"
+            return render_template(
+                "wallet/deposit.html",
+                preset_amounts=preset_amounts,
+                account_number=account_number,
+                account_name=account_name,
+                deposit=dep,
+                ussd=ussd,
+            )
 
-    return render_template("wallet/deposit.html", methods=methods, preset_amounts=preset_amounts)
+    return render_template(
+        "wallet/deposit.html",
+        preset_amounts=preset_amounts,
+        account_number=account_number,
+        account_name=account_name,
+        deposit=None,
+        ussd=None,
+    )
 
 
 @wallet_bp.route("/retrait", methods=["GET", "POST"])

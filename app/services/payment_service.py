@@ -36,7 +36,7 @@ class SandboxPaymentProvider(PaymentProvider):
 
     name = "sandbox"
 
-    def create_deposit(self, user, amount, method):
+    def create_deposit(self, user, amount, method, note=None):
         amount = to_dec(amount)
         reference = generate_reference("DEP")
         deposit = Deposit(
@@ -45,7 +45,7 @@ class SandboxPaymentProvider(PaymentProvider):
             method=method,
             reference=reference,
             status="pending",
-            note="Mode SANDBOX — dépôt de test, aucun paiement réel.",
+            note=note or "Mode SANDBOX — dépôt de test, aucun paiement réel.",
         )
         db.session.add(deposit)
         db.session.flush()

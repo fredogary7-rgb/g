@@ -417,7 +417,7 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 .menu-item .m-txt { flex: 1; }
 .menu-item .m-txt .t { font-weight: 700; font-size: 14.5px; }
 .menu-item .m-txt .s { font-size: 12px; color: var(--fanta-muted); }
-.menu-item .chev { color: var(--fanta-muted); }
+.menu-item .chev { color: var(--fanta-muted); width: 18px; height: 18px; flex: 0 0 auto; }
 
 /* Info list (données du profil) */
 .info-list .row-item { display: flex; justify-content: space-between; gap: 12px; padding: 12px 2px; border-bottom: 1px dashed var(--fanta-line); }

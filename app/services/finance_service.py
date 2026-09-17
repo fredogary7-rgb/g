@@ -118,3 +118,19 @@ def reject_deposit(deposit, note=None):
         "/historique",
     )
     return deposit
+
+
+def admin_adjust_balance(user, signed_amount, description="Ajustement administrateur"):
+    """Crédite (valeur positive) ou débite (valeur négative) un compte en admin."""
+    amount = to_dec(signed_amount)
+    if amount > 0:
+        credit_balance(user, amount)
+    elif amount < 0:
+        if to_dec(user.balance) < -amount:
+            raise ValueError("Solde insuffisant pour ce débit.")
+        debit_balance(user, -amount)
+    else:
+        raise ValueError("Le montant doit être différent de zéro.")
+
+    record_transaction(user, "adjustment", amount, generate_reference("ADJ"), description)
+    return amount

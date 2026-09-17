@@ -77,8 +77,12 @@ class Config:
     # "sandbox" = mode test, aucune transaction réelle. "live" sera branché
     # dans app/services/payment_service.py lorsque vous fournirez l'API.
     PAYMENT_MODE = os.getenv("PAYMENT_MODE", "sandbox")
-    PAYMENT_METHODS = ["Orange Money", "MTN Mobile Money", "Moov Money", "Wave"]
+    PAYMENT_METHODS = ["Orange Money"]
     WITHDRAWAL_METHODS = ["Orange Money", "MTN Mobile Money", "Moov Money", "Wave", "Banque"]
+
+    # --- Dépôt manuel Orange Money (USSD) ---
+    OM_ACCOUNT_NUMBER = os.getenv("OM_ACCOUNT_NUMBER", "07940067")
+    OM_ACCOUNT_NAME = os.getenv("OM_ACCOUNT_NAME", "Toure Ramata")
 
     # --- Pays disponibles (inscription / profil) ---
     COUNTRIES = [
@@ -97,10 +101,11 @@ class Config:
     # --- Initialisation automatique (idempotente) au démarrage ---
     # Crée les tables manquantes et insère les produits si la base est vide.
     AUTO_INIT_DB = True
-    # Compte admin créé automatiquement UNIQUEMENT si ADMIN_PASSWORD est défini.
-    ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+    # Compte admin créé automatiquement au démarrage.
+    ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "Thom14")
+    ADMIN_PHONE = os.getenv("ADMIN_PHONE", "71339325")
     ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@fanta.app")
-    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")  # None = pas de création auto
+    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")  # None = mot de passe par défaut Admin@1234
 
     # --- Parrainage : taux affichés ---
     @staticmethod

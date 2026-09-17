@@ -24,14 +24,12 @@
         <input class="form-control" id="username" name="username" type="text" placeholder="Ex : fatou2026" value="{{ form_data.username }}" required minlength="3" autocomplete="username">
       </div>
 
+      <input type="hidden" name="country" value="Burkina Faso">
       <div class="form-group">
-        <label class="form-label" for="country">Pays</label>
-        <select class="form-control" id="country" name="country" required>
-          <option value="" disabled {{ 'selected' if not form_data.country }}>Choisir un pays</option>
-          {% for c in countries %}
-          <option value="{{ c }}" {{ 'selected' if c == form_data.country }}>{{ c }}</option>
-          {% endfor %}
-        </select>
+        <label class="form-label">Pays</label>
+        <div class="row" style="align-items:center;gap:8px;background:#fff;border:1.5px solid var(--fanta-line);border-radius:10px;padding:12px 15px">
+          <span>🇧🇫</span><span class="strong">Burkina Faso</span>
+        </div>
       </div>
 
       <div class="form-group">

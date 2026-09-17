@@ -8,39 +8,124 @@
   <h1>Recharger</h1>
 </div>
 
-<div class="balance-card slide-up slide-up-1">
-  <div class="lbl">Solde actuel</div>
-  <div class="amount" style="font-size:24px">{{ current_user.balance|money }}</div>
+{% if deposit %}
+<div class="card card-pad slide-up">
+  <div class="center">
+    <div class="badge badge-success" style="margin-bottom:8px">Dépôt enregistré</div>
+    <h2 style="font-size:17px">Effectuez le paiement</h2>
+    <p class="muted small mt-1">Envoyez le montant sur le compte Orange ci-dessous, puis revenez ici.</p>
+  </div>
+
+  <div class="recap">
+    <div class="line"><span>Montant à payer</span><b>{{ deposit.amount|money }}</b></div>
+    <div class="line">
+      <span>Compte Orange</span>
+      <span class="row" style="align-items:center;gap:6px;margin:0"><b>{{ account_number }}</b>
+        <button type="button" class="btn btn-ghost btn-sm" data-copy="{{ account_number }}">{{ icon('copy') }}</button>
+      </span>
+    </div>
+    <div class="line">
+      <span>Nom du compte</span>
+      <span class="row" style="align-items:center;gap:6px;margin:0"><b>{{ account_name }}</b>
+        <button type="button" class="btn btn-ghost btn-sm" data-copy="{{ account_name }}">{{ icon('copy') }}</button>
+      </span>
+    </div>
+  </div>
+
+  <a class="btn btn-primary btn-block mt-2" href="tel:{{ ussd }}">{{ icon('arrow-right') }} Cliquez pour payer</a>
+
+  <div class="ref-box mt-2">
+    <span class="code">{{ ussd }}</span>
+    <button type="button" class="btn btn-ghost btn-sm" data-copy="{{ ussd }}">{{ icon('copy') }}</button>
+  </div>
+
+  <div class="mt-2" style="background:var(--fanta-cream-2);border-radius:16px;padding:14px">
+    <p class="small strong">Paiement effectué ?</p>
+    <p class="small muted mt-1">Votre dépôt sera validé par l'administrateur après réception des fonds.</p>
+    <button type="button" class="btn btn-primary btn-block mt-2" id="verify-btn">{{ icon('check') }} J'ai payé</button>
+    <p class="small center mt-1" id="verify-msg" style="display:none;color:var(--green);font-weight:700">✅ Merci ! Votre dépôt est en attente de validation.</p>
+  </div>
+
+  <a class="btn btn-outline btn-block mt-2" href="{{ url_for('wallet.history', type='deposit') }}">Voir mes dépôts</a>
 </div>
 
-<div class="card card-pad slide-up slide-up-2">
-  <div class="badge badge-warning" style="margin-bottom:12px">Mode SANDBOX — test uniquement</div>
-  <p class="small muted">Choisissez un montant et une méthode. Votre dépôt reste en attente de validation — aucun paiement réel tant que le prestataire officiel n'est pas branché.</p>
+{% else %}
+<form method="post" id="deposit-form" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="method" value="Orange Money">
 
-  <form method="post" novalidate>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card card-pad slide-up" id="step1">
+    <div class="badge badge-warning" style="margin-bottom:12px">Orange Money · Burkina Faso</div>
+    <p class="small muted">Choisissez un montant, puis confirmez votre numéro Orange Money.</p>
 
-    <label class="form-label mt-2">Montant ({{ CURRENCY }})</label>
+    <label class="form-label mt-2">Montant de la recharge ({{ CURRENCY }})</label>
     <div class="amt-chips">
       {% for a in preset_amounts %}
       <button type="button" class="chip amt-chip" data-amount="{{ a }}">{{ a|number }}</button>
       {% endfor %}
     </div>
-    <input class="form-control mt-2" id="amount" name="amount" type="number" min="100" step="any" placeholder="Autre montant…" required>
+    <input class="form-control mt-2" id="amount" name="amount" type="number" min="500" step="any" placeholder="Autre montant…" required>
 
-    <label class="form-label mt-2">Méthode de paiement</label>
-    <div class="pay-methods">
-      {% for m in methods %}
-      <label class="pay-method">
-        <input type="radio" name="method" value="{{ m }}" required>
-        <span class="pm-dot"></span>
-        <span class="pm-txt">{{ m }}</span>
-      </label>
-      {% endfor %}
+    <button type="button" class="btn btn-primary btn-block mt-3" data-next="step2">{{ icon('arrow-right') }} Continuer</button>
+    <p class="small muted center mt-2">Si le paiement n'arrive pas, contactez le support.</p>
+  </div>
+
+  <div class="card card-pad slide-up" id="step2" style="display:none">
+    <button type="button" class="btn btn-ghost btn-sm" data-back="step1">{{ icon('chevron-left') }} Retour</button>
+
+    <div class="center mt-1">
+      <p class="small muted">Montant de paiement</p>
+      <p class="strong" style="font-size:22px;color:var(--fanta-orange-deep)" id="amount-summary"></p>
     </div>
 
-    <button class="btn btn-primary btn-block mt-3" type="submit">{{ icon('arrow-down') }} Créer le dépôt</button>
-  </form>
-</div>
+    <label class="form-label mt-2">Numéro Orange Money</label>
+    <div class="row" style="align-items:center;gap:8px">
+      <span class="strong" style="font-size:15px">+226</span>
+      <input class="form-control" id="phone" name="phone" type="tel" placeholder="70 12 34 56" style="flex:1" required>
+    </div>
+    <p class="form-hint">⚠️ Un numéro incorrect peut entraîner la perte des fonds.</p>
+
+    <button type="submit" class="btn btn-primary btn-block mt-3">Confirmer</button>
+  </div>
+</form>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var form = document.getElementById("deposit-form");
+  var amountInput = document.getElementById("amount");
+  var summary = document.getElementById("amount-summary");
+
+  function updateActive(active) {
+    document.querySelectorAll(".amt-chip").forEach(function (c) { c.classList.remove("active"); });
+    if (active) active.classList.add("active");
+  }
+  function updateSummary() {
+    var n = parseInt(amountInput && amountInput.value, 10);
+    if (summary) summary.textContent = (n && n > 0) ? n.toLocaleString("fr-FR") + " FCFA" : "";
+  }
+  function showStep(id) {
+    var s1 = document.getElementById("step1");
+    var s2 = document.getElementById("step2");
+    if (s1) s1.style.display = id === "step1" ? "" : "none";
+    if (s2) s2.style.display = id === "step2" ? "" : "none";
+    if (id === "step2") updateSummary();
+  }
+
+  document.addEventListener("click", function (e) {
+    var chip = e.target.closest(".amt-chip");
+    if (chip) { if (amountInput) amountInput.value = chip.getAttribute("data-amount"); updateActive(chip); updateSummary(); return; }
+    var next = e.target.closest("[data-next]");
+    if (next) { showStep(next.getAttribute("data-next")); return; }
+    var back = e.target.closest("[data-back]");
+    if (back) { showStep(back.getAttribute("data-back")); return; }
+    var verify = e.target.closest("#verify-btn");
+    if (verify) { verify.style.display = "none"; var m = document.getElementById("verify-msg"); if (m) m.style.display = ""; }
+  });
+  if (amountInput) amountInput.addEventListener("input", updateSummary);
+})();
+</script>
 {% endblock %}
 

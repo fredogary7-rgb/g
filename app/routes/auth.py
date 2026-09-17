@@ -78,8 +78,6 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
 
-    countries = current_app.config.get("COUNTRIES", ["Burkina Faso"])
-
     # Pré-remplissage quand on arrive via /inscription?ref=ABC123
     ref = (request.args.get("ref") or "").strip().upper()
     form_data = {"username": "", "phone": "", "country": "Burkina Faso", "referral_code": ref}
@@ -128,9 +126,7 @@ def register():
             flash("Compte créé avec succès. Bienvenue sur FANTA !", "success")
             return redirect(url_for("main.dashboard"))
 
-    return render_template(
-        "auth/inscription.html", ref=ref, form_data=form_data, countries=countries
-    )
+    return render_template("auth/inscription.html", ref=ref, form_data=form_data)
 
 
 @auth_bp.route("/connexion", methods=["GET", "POST"])

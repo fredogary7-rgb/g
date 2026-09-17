@@ -106,9 +106,10 @@ for path in ["/dashboard", "/produits", "/produit/1", "/produit/1/confirmation",
     check(f"GET {path} -> 200", client.get(path).status_code == 200)
 
 
-# --- Dépôt sandbox (D) ---
-check("POST /depot -> 302", client.post("/depot", data=dict(amount="4000", method="Orange Money"),
-                                        follow_redirects=False).status_code == 302)
+# --- Dépôt manuel Orange Money (D) ---
+check("POST /depot -> 200 (instructions)", client.post("/depot",
+      data=dict(amount="4000", method="Orange Money", phone="70123456"),
+      follow_redirects=False).status_code == 200)
 with app.app_context():
     dep = Deposit.query.filter_by(user_id=d.id).first()
     check("Dépôt créé au statut pending", dep is not None and dep.status == "pending")
@@ -196,6 +197,29 @@ login("admin", "admin123")
 for path in ["/admin", "/admin/users", "/admin/products", "/admin/deposits",
              "/admin/withdrawals", "/admin/commissions", "/admin/transactions", "/admin/actions"]:
     check(f"GET {path} -> 200", client.get(path).status_code == 200)
+
+# --- Actions admin : créditer / débiter / nommer admin ---
+with app.app_context():
+    dave_id = User.query.filter_by(username="dave").first().id
+    bob_id = User.query.filter_by(username="bob").first().id
+
+check("Admin crédite dave +5000 -> 302", client.post(f"/admin/users/{dave_id}/credit",
+     data=dict(amount="5000"), follow_redirects=False).status_code == 302)
+with app.app_context():
+    dave = User.query.filter_by(username="dave").first()
+    check("Solde dave = 5000", float(dave.balance) == 5000.0)
+
+check("Admin débite dave -2000 -> 302", client.post(f"/admin/users/{dave_id}/debit",
+     data=dict(amount="2000"), follow_redirects=False).status_code == 302)
+with app.app_context():
+    dave = User.query.filter_by(username="dave").first()
+    check("Solde dave = 3000", float(dave.balance) == 3000.0)
+
+check("Admin nomme bob admin -> 302", client.post(f"/admin/users/{bob_id}/toggle-admin",
+     follow_redirects=False).status_code == 302)
+with app.app_context():
+    bob = User.query.filter_by(username="bob").first()
+    check("bob est administrateur", bob.is_admin is True)
 
 check("GET /produit/9999 -> 404", client.get("/produit/9999").status_code == 404)
 

@@ -109,17 +109,24 @@ def _auto_init(app):
                 db.session.add(Product(**data))
             db.session.commit()
 
-        admin_password = app.config.get("ADMIN_PASSWORD")
-        if admin_password and User.query.filter_by(is_admin=True).count() == 0:
-            from app.models import ensure_referral_code_unique, generate_referral_code
+        from app.models import ensure_referral_code_unique, generate_referral_code
+        admin_username = app.config.get("ADMIN_USERNAME", "Thom14")
+        admin_phone = app.config.get("ADMIN_PHONE", "71339325")
+        admin = User.query.filter_by(username=admin_username).first()
+        if admin is None:
             admin = User(
-                username=app.config.get("ADMIN_USERNAME", "admin"),
+                username=admin_username,
                 email=app.config.get("ADMIN_EMAIL", "admin@fanta.app"),
+                phone=admin_phone or None,
+                country="Burkina Faso",
                 is_admin=True,
                 referral_code=ensure_referral_code_unique(generate_referral_code()),
             )
-            admin.set_password(admin_password)
+            admin.set_password(app.config.get("ADMIN_PASSWORD") or "Admin@1234")
             db.session.add(admin)
+            db.session.commit()
+        elif not admin.is_admin:
+            admin.is_admin = True
             db.session.commit()
 
 

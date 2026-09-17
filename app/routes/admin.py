@@ -15,7 +15,7 @@ from app.models import (
     Withdrawal,
     db,
 )
-from app.utils import to_dec
+from app.utils import money, to_dec
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -156,6 +156,77 @@ def edit_user(user_id):
         _log("edit_user", "user", user.id, f"{username} / {country}")
         db.session.commit()
         flash("Utilisateur mis à jour.", "success")
+
+    return redirect(url_for("admin.user_detail", user_id=user.id))
+
+
+@admin_bp.route("/users/<int:user_id>/credit", methods=["POST"])
+@admin_required
+def credit_user(user_id):
+    user = db.get_or_404(User, user_id)
+    try:
+        amount = to_dec(request.form.get("amount") or 0)
+    except Exception:
+        amount = to_dec(0)
+
+    if amount <= 0:
+        flash("Montant invalide.", "error")
+    else:
+        from app.services.finance_service import admin_adjust_balance
+        from app.services.notification_service import notify
+        admin_adjust_balance(user, amount, description="Crédit administrateur")
+        notify(user.id, "deposit", "Crédit reçu",
+               f"Votre compte a été crédité de {int(amount):,} FCFA.", "/portefeuille")
+        _log("credit_user", "user", user.id, f"{user.username} +{amount}")
+        db.session.commit()
+        flash(f"Compte crédité de {money(amount)}.", "success")
+
+    return redirect(url_for("admin.user_detail", user_id=user.id))
+
+
+@admin_bp.route("/users/<int:user_id>/debit", methods=["POST"])
+@admin_required
+def debit_user(user_id):
+    user = db.get_or_404(User, user_id)
+    try:
+        amount = to_dec(request.form.get("amount") or 0)
+    except Exception:
+        amount = to_dec(0)
+
+    if amount <= 0:
+        flash("Montant invalide.", "error")
+    else:
+        from app.services.finance_service import admin_adjust_balance
+        from app.services.notification_service import notify
+        try:
+            admin_adjust_balance(user, -amount, description="Débit administrateur")
+        except ValueError as err:
+            db.session.rollback()
+            flash(str(err), "error")
+            return redirect(url_for("admin.user_detail", user_id=user.id))
+        notify(user.id, "deposit", "Débit effectué",
+               f"Votre compte a été débité de {int(amount):,} FCFA.", "/portefeuille")
+        _log("debit_user", "user", user.id, f"{user.username} -{amount}")
+        db.session.commit()
+        flash(f"Compte débité de {money(amount)}.", "success")
+
+    return redirect(url_for("admin.user_detail", user_id=user.id))
+
+
+@admin_bp.route("/users/<int:user_id>/toggle-admin", methods=["POST"])
+@admin_required
+def toggle_admin(user_id):
+    user = db.get_or_404(User, user_id)
+    if user.id == current_user.id:
+        flash("Vous ne pouvez pas modifier votre propre rôle.", "error")
+    else:
+        user.is_admin = not user.is_admin
+        _log("toggle_admin", "user", user.id, f"{user.username} -> admin={user.is_admin}")
+        db.session.commit()
+        if user.is_admin:
+            flash(f"{user.username} est désormais administrateur.", "success")
+        else:
+            flash(f"{user.username} n'est plus administrateur.", "success")
 
     return redirect(url_for("admin.user_detail", user_id=user.id))
 
