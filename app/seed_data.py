@@ -9,16 +9,6 @@ Vous pourrez la corriger depuis l'admin -> Produits si vous le souhaitez.
 
 PRODUCTS_SEED = [
     {
-        "name": "Fanta 1",
-        "price": 4000,
-        "daily_income": 460,
-        "total_income": 16100,
-        "duration": 35,
-        "image": "fanta-1.svg",
-        "sort_order": 1,
-        "description": "Pack Fanta Orange — démarrage accessible pour tester la plateforme.",
-    },
-    {
         "name": "Fanta 2",
         "price": 8000,
         "daily_income": 980,
@@ -26,7 +16,7 @@ PRODUCTS_SEED = [
         "total_income": 32100,
         "duration": 35,
         "image": "fanta-2.svg",
-        "sort_order": 2,
+        "sort_order": 1,
         "description": "Pack Fanta Agrumes — formule intermédiaire.",
     },
     {
@@ -36,7 +26,7 @@ PRODUCTS_SEED = [
         "total_income": 56000,
         "duration": 35,
         "image": "fanta-3.svg",
-        "sort_order": 3,
+        "sort_order": 2,
         "description": "Pack Fanta Citron — rendement renforcé.",
     },
     {
@@ -46,7 +36,7 @@ PRODUCTS_SEED = [
         "total_income": 73500,
         "duration": 35,
         "image": "fanta-4.svg",
-        "sort_order": 4,
+        "sort_order": 3,
         "description": "Pack Fanta Exotique — profil équilibré.",
     },
     {
@@ -56,7 +46,7 @@ PRODUCTS_SEED = [
         "total_income": 119000,
         "duration": 35,
         "image": "fanta-5.svg",
-        "sort_order": 5,
+        "sort_order": 4,
         "description": "Pack Fanta Ananas — croissance solide.",
     },
     {
@@ -66,7 +56,7 @@ PRODUCTS_SEED = [
         "total_income": 206500,
         "duration": 35,
         "image": "fanta-6.svg",
-        "sort_order": 6,
+        "sort_order": 5,
         "description": "Pack Fanta Fraise — rendement avancé.",
     },
     {
@@ -76,7 +66,7 @@ PRODUCTS_SEED = [
         "total_income": 311500,
         "duration": 35,
         "image": "fanta-7.svg",
-        "sort_order": 7,
+        "sort_order": 6,
         "description": "Pack Fanta Tropical — performance élevée.",
     },
     {
@@ -86,7 +76,8 @@ PRODUCTS_SEED = [
         "total_income": 420000,
         "duration": 35,
         "image": "fanta-8.svg",
-        "sort_order": 8,
+        "sort_order": 7,
         "description": "Pack Fanta Premium — formule la plus rentable.",
     },
 ]
+

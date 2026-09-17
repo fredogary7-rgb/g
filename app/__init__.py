@@ -103,11 +103,17 @@ def _auto_init(app):
         _ensure_schema()
 
         from app.models import Product
-        if Product.query.count() == 0:
-            from app.seed_data import PRODUCTS_SEED
-            for data in PRODUCTS_SEED:
+        from app.seed_data import PRODUCTS_SEED
+        existing_names = {p.name for p in Product.query.all()}
+        for data in PRODUCTS_SEED:
+            if data["name"] not in existing_names:
                 db.session.add(Product(**data))
-            db.session.commit()
+        # "Fanta 1" n'est plus au catalogue : on le désactive (sans supprimer
+        # les éventuels achats déjà liés).
+        fanta1 = Product.query.filter_by(name="Fanta 1").first()
+        if fanta1 is not None and fanta1.active:
+            fanta1.active = False
+        db.session.commit()
 
         from app.models import ensure_referral_code_unique, generate_referral_code
         admin_username = app.config.get("ADMIN_USERNAME", "Thom14")

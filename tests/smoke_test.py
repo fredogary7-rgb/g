@@ -108,7 +108,7 @@ for path in ["/dashboard", "/produits", "/produit/1", "/produit/1/confirmation",
 
 # --- Dépôt manuel Orange Money (D) ---
 check("POST /depot -> 200 (instructions)", client.post("/depot",
-      data=dict(amount="4000", method="Orange Money", phone="70123456"),
+      data=dict(amount="8000", method="Orange Money", phone="70123456"),
       follow_redirects=False).status_code == 200)
 with app.app_context():
     dep = Deposit.query.filter_by(user_id=d.id).first()
@@ -124,7 +124,7 @@ with app.app_context():
     dep = db.session.get(Deposit, dep_id)
     check("Dépôt approuvé", dep.status == "approved")
     d = User.query.filter_by(username="dave").first()
-    check("Solde D crédité de 4000", float(d.balance) == 4000.0)
+    check("Solde D crédité de 8000", float(d.balance) == 8000.0)
 
 # --- D achète le produit 1 ---
 logout()
@@ -143,7 +143,7 @@ with app.app_context():
     if len(commissions) == 3:
         check("N1 -> bénéficiaire C", commissions[0].level == 1 and commissions[0].beneficiary.username == "carol")
         check("N1 -> taux 18%", float(commissions[0].rate) == 0.18)
-        check("N1 -> montant 720", float(commissions[0].amount) == 720.0)
+        check("N1 -> montant 1440", float(commissions[0].amount) == 1440.0)
         check("N2 -> bénéficiaire B", commissions[1].level == 2 and commissions[1].beneficiary.username == "bob")
         check("N3 -> bénéficiaire A", commissions[2].level == 3 and commissions[2].beneficiary.username == "alice")
 
@@ -157,9 +157,9 @@ with app.app_context():
     comm = db.session.get(Commission, comm_id)
     check("Commission approuvée", comm.status == "approved")
     c = User.query.filter_by(username="carol").first()
-    check("Solde C crédité de 720", float(c.balance) == 720.0)
+    check("Solde C crédité de 1440", float(c.balance) == 1440.0)
 
-# --- Retrait complet : création + rejet (carol dispose de 720 FCFA) ---
+# --- Retrait complet : création + rejet (carol dispose de 1440 FCFA) ---
 logout()
 login("carol")
 check("POST /retrait (carol, 200) -> 302", client.post("/retrait",
@@ -169,7 +169,7 @@ with app.app_context():
     carol = User.query.filter_by(username="carol").first()
     wd = Withdrawal.query.filter_by(user_id=carol.id).first()
     check("Retrait pending créé", wd is not None and wd.status == "pending")
-    check("Solde carol immobilisé (520)", float(carol.balance) == 520.0)
+    check("Solde carol immobilisé (1240)", float(carol.balance) == 1240.0)
     wd_id = wd.id
 logout()
 login("admin", "admin123")
@@ -179,7 +179,7 @@ with app.app_context():
     wd = db.session.get(Withdrawal, wd_id)
     check("Retrait rejeté", wd.status == "rejected")
     carol = User.query.filter_by(username="carol").first()
-    check("Solde carol recrédité (720)", float(carol.balance) == 720.0)
+    check("Solde carol recrédité (1440)", float(carol.balance) == 1440.0)
 
 # --- Retrait (solde insuffisant : re-rendu du formulaire avec erreur) ---
 logout()
